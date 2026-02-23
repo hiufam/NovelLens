@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <style>
+  #main-container {
+    position: absolute;
+    z-index: 9;
+    background-color: #f1f1f1;
+    text-align: center;
+    border: 1px solid #d3d3d3;
+  }
+
+  .drag-header {
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+    background-color: #d3d3d3;
+    color: #fff;
+  }
+  #main {
+    width: 100%;
+    height: 100%;
+  }
+  .areas-container {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    flex: 1 1 auto;
+  }
+  .vertical-container {
+    flex-direction: column;
+  }
+  .horizontal-container {
+    flex-direction: row;
+  }
+  .area {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+
+    width: 0; /* IMPORTANT: Allow crushing of flex item */
+    height: 100%;
+    background-color: gainsboro;
+    position: relative;
+    overflow: hidden;
+  }
+  .resizer {
+    width: 8px;
+    height: 100%;
+    background-color: seagreen;
+    cursor: e-resize;
+  }
+  .vertical-resizer {
+    width: 8px;
+    height: 100%;
+    cursor: n-resize;
+  }
+  .horizontal-resizer {
+    height: 8px;
+    width: 100%;  
+    cursor: e-resize;
+  }
+  html, body {
+    height: calc(100vh - 28px);
+    background-color: #e1e1e1;
+  }
+  </style>
+  <body>
+    <div id='main'>
+      <div id="areas-container-3" class="areas-container horizontal-container" style="height: 100%;">
+  
+        <div id="areas-container-0" class="areas-container horizontal-container" style="width: 20%;">
+          <%= render "shared/dragbox" %>
+        </div>
+  
+        <div id="resizer-0" class="resizer">
+        </div>
+        
+        <div id="areas-container-1" class="areas-container horizontal-container"  style="width: 20%;">
+          <div id="area-1" class="area">
+            <div class="drag-header">
+              Click here to move
+            </div>
+          </div>
+        </div>
+        
+        <div id="resizer-1" class="resizer">
+        </div>
+  
+        <div id="areas-container-2" class="areas-container horizontal-container"  style="width: 20%;">
+          <div id="area-2" class="area">
+            <div class="drag-header">
+              Click here to move
+            </div>
+          </div>
+        </div>
+  
+        <div id="resizer-2" class="resizer">
+        </div>
+        
+        <div id="areas-container-11" class="areas-container vertical-container"  style="width: 20%;">
+  
+          <div id="areas-container-0" class="areas-container">
+            <div id="area-0" class="area">
+              <div class="drag-header">
+                Click here to move
+              </div>
+            </div>
+          </div>
+    
+          <div id="resizer-0" class="resizer horizontal-resizer">
+          </div>
+          
+          <div id="areas-container-1" class="areas-container">
+            <div id="area-1" class="area">
+              <div class="drag-header">
+                Click here to move
+              </div>
+            </div>
+          </div>
+    
+           <div id="resizer-2" class="resizer horizontal-resizer">
+          </div>
+          
+          <div id="areas-container-2" class="areas-container horizontal-container">
+            
+            
+            <div id="areas-container-1" class="areas-container horizontal-container">
+              <div id="area-1" class="area">
+                <div class="drag-header">
+                  Click here to move
+                </div>
+              </div>
+            </div>
+            
+            <div id="resizer-1" class="resizer">
+            </div>
+      
+            <div id="areas-container-2" class="areas-container horizontal-container">
+              <div id="area-2" class="area">
+                <div class="drag-header">
+                  Click here to move
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%= javascript_include_tag "tree" %>
+    <%= javascript_include_tag "home" %>
+    <%= javascript_include_tag "dragbox" %>
+    <%= javascript_include_tag "resizer" %>
+  </body>
+</html>

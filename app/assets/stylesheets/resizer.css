@@ -1,0 +1,26 @@
+.areas-container {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  flex: 1 1 auto;
+}
+.vertical-container {
+  flex-direction: column;
+}
+.horizontal-container {
+  flex-direction: row;
+}
+.resizer {
+  width: 8px;
+  height: 100%;
+  background-color: seagreen;
+  cursor: e-resize;
+}
+.vertical-resizer {
+  width: 8px;
+  height: 100%;
+}
+.horizontal-resizer {
+  height: 8px;
+  width: 100%;  
+}

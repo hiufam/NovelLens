@@ -8,3 +8,17 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+#main-container {
+  height: 100%;
+}
+#main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 12px;
+}
+html, body {
+  height: calc(100vh - 28px);
+  background-color: #e1e1e1;
+}

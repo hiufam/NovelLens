@@ -1,0 +1,18 @@
+.drag-header {
+  padding: 10px;
+  cursor: move;
+  z-index: 10;
+  background-color: #d3d3d3;
+  color: #fff;
+}
+.drag-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+
+  width: 0; /* IMPORTANT: Allow crushing of flex item */
+  height: 100%;
+  background-color: gainsboro;
+  position: relative;
+  overflow: hidden;
+}

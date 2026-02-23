@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+    <div id='main'>
+      <button>
+        Toggle
+      </button>
+      <div id='main-container'>
+      </div>
+    </div>
+
+    <div hidden>
+      <%= render 'shared/dragbox' %>
+    </div>
+    
+    <%= javascript_include_tag "container-view" %>
+    <%= javascript_include_tag "tree" %>
+    <%= javascript_include_tag "home" %>
+    <%= javascript_include_tag "dragbox" %>
+    <%= javascript_include_tag "resizer" %>
+  </body>
+</html>
