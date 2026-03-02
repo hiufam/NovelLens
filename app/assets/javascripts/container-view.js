@@ -6,36 +6,33 @@ class ContainerView {
 
   constructor(tree) {
     this.#tree = tree
-
-    this.rootContainer = this.createDragContainer(tree.root);
+    
+    this.rootContainer = this.createContainer(tree.root);
     this.rootContainer.style.height = '100%';
     
     this.mainContainer = document.getElementById('main-container');
     this.mainContainer.append(this.rootContainer);
+
     tree.root.data.element = this.rootContainer;
     
     this.dragbox = document.getElementById('shared-dragbox');
   }
-
+  
   get tree() {
     return this.#tree
   }
   
   // parentNode must have element data
   getDefaultChildContainerSizePercentage(parentNode) {
-    let sizeKey;
-    let size;
-    let containerElement = parentNode.data.element;
+    let sizeKey = 'width';
+    const containerElement = parentNode.data.element;
     if (parentNode.data.flexDirection == 'column') {
-      size = containerElement.getBoundingClientRect().height;
       sizeKey = 'height'
-    } else {
-      size = containerElement.getBoundingClientRect().width;
-      sizeKey = 'width'
     }
-
-    // 8 is size of resizer
-    const remainingSize = size - (parentNode.children.length - 1) * 8.0;
+    
+    const clientRect = containerElement.getBoundingClientRect();
+    const size = clientRect[sizeKey];
+    const remainingSize = size - (parentNode.children.length - 1) * 8.0; // 8 is size of resizer    
 
     return {
       sizeKey,
@@ -50,7 +47,7 @@ class ContainerView {
   //     </div>
   //   </div>
   // </div>
-  createDragContainer(node) {
+  createContainer(node) {
     const container = document.createElement('div');
     
     container.id = `areas-container-${node.key}`;
@@ -65,6 +62,10 @@ class ContainerView {
     if (node.data.type === 'wrapper') {
       container.classList.add('container-wrapper');
     }
+
+    // get element for node
+    node.data.element = container;
+
     
     return container;
   }
@@ -73,7 +74,7 @@ class ContainerView {
   // </div>
   createResizer(siblingNode, parentNode) {
     const resizer = document.createElement('div');
-
+    
     const nodeIndex = siblingNode.getRelativeIndex();
     
     resizer.id = `resizer-${parentNode.key}-${nodeIndex}`;
@@ -86,19 +87,19 @@ class ContainerView {
     if (parentNode.data.flexDirection === 'column') {
       resizer.classList.add('horizontal-resizer');
     }
-
+    
     return resizer;
   }
-
+  
   buildContainers() {
     this.#tree.breadthFirstTraverse((node, parentNode) => {
       if (node.key === 'root') return; 
-      
-      const dragContainerElement = this.createDragContainer(node);
+
+      const dragContainerElement = this.createContainer(node);
       const clonedDragbox = this.dragbox.cloneNode(true);
 
       this.#containers.push(dragContainerElement);
-      
+
       if (node.data.type !== 'wrapper') {
         clonedDragbox.id = `shared-dragbox-${node.key}`;
         const title = clonedDragbox.getElementsByTagName('span')[0];
@@ -107,20 +108,20 @@ class ContainerView {
         dragContainerElement.append(clonedDragbox);
       }
   
-      if (parentNode) {
+      if (parentNode) {        
         const parentElement = document.getElementById(`areas-container-${parentNode.key}`)    
         parentElement.append(dragContainerElement);
-        // get element for node
-        node.data.element = dragContainerElement;
       }
   
       if (parentNode?.children?.length > 0) {      
-        const data = this.getDefaultChildContainerSizePercentage(parentNode);      
+        const data = this.getDefaultChildContainerSizePercentage(parentNode);
         dragContainerElement.style[data.sizeKey] = data.sizePercentage;
         // get size percentage for node
+        
+        node.data.rect = data.rect; 
         node.data.size = data.sizePercentage;
       }
-    });  
+    });
   }
 
   
@@ -144,17 +145,25 @@ class ContainerView {
   }
 
   rebuildContainers() {
-    this.#tree.breadthFirstTraverse((node, _) => {      
-      if (node.key !== 'root') {
-        node.data.element.remove();
-      }
+    const newContainers = [];
+    this.#tree.breadthFirstTraverse((node, _) => {
+      if (node.key === 'root') return;
 
-      if (node.data.type === 'wrapper' && node.children.length === 0) {
-        node.data.element.remove();
-      }
-    })    
+      const parentNodeElement = node.data.parent.data.element;
+      
+      parentNodeElement.append(node.data.element);
 
-    this.buildContainers();
+      newContainers.push(node.data.element);
+    });    
+    const newContainersIds = newContainers.map((c) => c.id);    
+
+    this.#containers.forEach((container) => {
+      if (!newContainersIds.includes(container.id)) {
+        container.remove();
+      }      
+    });
+
+    this.#containers = newContainers;
   }
 
   updateContainers(parentNode) {
@@ -164,6 +173,7 @@ class ContainerView {
       parentNode?.children.forEach((child) => {
         const element = child.data.element;
         element.style[data.sizeKey] = data.sizePercentage;
+
         child.data.size = data.sizePercentage;
       })
     }
@@ -188,6 +198,7 @@ class ContainerView {
   }
 
   saveView() {}
+
   buildView() {
     this.buildContainers();
     this.buildResizers();

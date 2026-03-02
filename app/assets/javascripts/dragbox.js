@@ -58,20 +58,24 @@
     }
   }
 
-  function handleDragEnd(overedElement, draggingElement, position){
+  function handleDragEnd(overedElement, draggingElement, position){    
     const overedElementNodeId = overedElement.id.split('-').at(-1);
-
     const overedNode = tree.findNode(overedElementNodeId);
     const overedContainer = overedNode.data.element;
-    const overedContainerParent = overedNode.data.parent;
 
     const draggingElementNodeId = draggingElement.id.split('-').at(-1);
     const draggingNode = tree.findNode(draggingElementNodeId);
     const draggingContainer = draggingNode.data.element;
-    const draggingContainerParent = draggingNode.data.parent;
-
+    
+    if (overedElementNodeId === draggingElementNodeId || !position) return;
+    
     let isParallelWithParent = false;
-
+    let sizeKey = 'width';
+    
+    if (position === 'top' || position === 'bottom') {
+      sizeKey = 'height';
+    }
+    
     if ((position === 'right' || position === 'left') && overedNode.data.parent.data.flexDirection === 'row') {
       isParallelWithParent = true;
     }
@@ -80,59 +84,157 @@
       isParallelWithParent = true;
     }
 
-    
-    if (isParallelWithParent) {
+    function parallelSizeUpdate() {
       // Update styles
       draggingContainer.classList = overedContainer.classList;
 
-      // Update size
-      const originSize = parseFloat(overedContainer.style.width);
-      overedContainer.style.width = `${originSize / 2}%`;
-      draggingContainer.style.width = `${originSize / 2}%`;
+      if (position && overedNode.data.parent.key !== draggingNode.data.parent.key) {      
+        const originSize = overedContainer.getBoundingClientRect()[sizeKey]
+        const calculatedSize = originSize - 8; // 8 for size of resizer
+        
+        const totalSize = parseFloat(overedContainer.style[sizeKey]) * calculatedSize /  originSize;
+        
+        // Remove previous size
+        draggingContainer.style.removeProperty('width')
+        draggingContainer.style.removeProperty('height')
       
+        overedNode.data.size = totalSize / 2;
+        overedContainer.style[sizeKey] = `${overedNode.data.size}%`;
+
+        draggingNode.data.size = totalSize / 2;
+        draggingContainer.style[sizeKey] = `${draggingNode.data.size}%`;
+      
+        containerView.rebuildContainers();
+      }
+
+      // Update position (parent is also updated)
       if (position === 'right' || position === 'bottom') {
-        // overedContainer.after(draggingContainer);
         tree.insertAfter(overedNode.data.parent.key, overedNode.key, draggingNode);
       }
 
       if (position === 'left' || position === 'top') {
-        // overedContainer.before(draggingContainer);
         tree.insertBefore(overedNode.data.parent.key, overedNode.key, draggingNode);
       }
+    }
 
-      tree.depthFirstTraverse((node) => {
-        if (node.key === 'root') return;
-
-        const parentNode = node.data.parent;
-
-        // remove no-children wrapper node
-        if (node.data.type === 'wrapper' && node.children.length === 0) {          
-          parentNode.children = parentNode.children.filter((cNode) => cNode.key !== node.key)
-        }
-
-        // remove wrapper if wrapper only has 1 child
-        if (node.data.type === 'wrapper' && node.children.length === 1) {          
-          parentNode.children = parentNode.children.filter((cNode) => cNode.key !== node.key)
-        }
-
-        // remove wrapper if parallel with parent and reappend children to new parent
-        if (node.data.type === 'wrapper' && containerView.checkParallel(node, parentNode)) {
-          console.log(node);
-          console.log(parentNode);
-        }
+    function perpendicularSizeUpdate() {
+      // 1. Create wrapper node      
+      const wrapperNode = new TreeNode(`${overedElementNodeId}${draggingElementNodeId}`, {
+        flexDirection: sizeKey === 'width' ? 'row' : 'column',
+        type: 'wrapper',
+        size: overedNode.data.size,
       });
+      
+      // 2. Create wrapper element
+      const container = containerView.createContainer(wrapperNode);      
+      container.style[overedNode.data.parent.data.flexDirection === 'row' ? 'width' : 'height'] = `${parseFloat(overedNode.data.size)}%`;
+
+      // 3. Insert wrapper node into hovered node index
+      const overedNodeIndex = overedNode.getRelativeIndex();
+      tree.insertAt(overedNode.data.parent.key, wrapperNode, overedNodeIndex);
+
+      if (position === 'left' || position === 'bottom') {
+        wrapperNode.insert(draggingNode);
+        wrapperNode.insert(overedNode);
+      }
+      
+      if (position === 'right' || position === 'top') {
+        wrapperNode.insert(overedNode);
+        wrapperNode.insert(draggingNode);
+      }
+
+      // 4. Update size of children elements
+      const mSizeKey = wrapperNode.data.flexDirection === 'row' ? 'width' : 'height';
+      wrapperNode.children.forEach((childNode) => {              
+        if (childNode.data.type === 'wrapper') return;
+        
+        childNode.data.flexDirection = overedNode.data.flexDirection;
+        childNode.data.size = 50;
+        
+        childNode.data.element.style.removeProperty('width')
+        childNode.data.element.style.removeProperty('height')
+        childNode.data.element.style[mSizeKey] = `${50}%`;      
+      });      
 
       containerView.rebuildContainers();
-      containerView.rebuildResizers();
-
-      Array.from(areas).forEach((area) => {  
-        addDragBehavior(area);
-      });
-    } else {
- 
     }
-    // console.log(tree);
-  }
+
+    // Update size of containers when all containers have been placed correctly
+    function postSizeUpdate() {
+      tree.depthFirstTraverse((node) => {      
+        if (node.key === 'root') return;
+        // move wrapper children if wrapper only has 1 child
+        // move wrapper children if wrapper is parallel with parent and reappend children to new parent
+        const newParentNode = node.data.parent
+        if (
+          (node.data.type === 'wrapper' && containerView.checkParallel(node, newParentNode)) ||
+          (node.data.type === 'wrapper' && node.children.length === 1)
+        ) {          
+          // 1. Update size of children in new parent
+          const prevParentNode = node;
+          const mSizeKey = newParentNode.data.flexDirection === 'row' ? 'width' : 'height';
+          
+          if (prevParentNode.children.length > 0) {
+            const newParentSize = newParentNode.data.element.getBoundingClientRect()[mSizeKey];            
+            const remainingSize = newParentNode.children.reduce((acc, childNode) => {
+              if (childNode.key === prevParentNode.key) return acc;
+              
+              const rect = childNode.data.element.getBoundingClientRect();
+              
+              return acc - (rect[mSizeKey] + 8);
+            }, newParentSize);
+
+            const remainingSizePercentage = (remainingSize / newParentSize) * 100;
+            const totalChildrenNodes = prevParentNode.children.length || 1;
+            
+            prevParentNode.children.forEach((childNode) => {              
+              if (childNode.data.type === 'wrapper') return;
+              
+              childNode.data.flexDirection = newParentNode.children[0].data.flexDirection;
+              childNode.data.size = totalChildrenNodes === 1 ? remainingSizePercentage : parseFloat(childNode.data.size) / 100 * remainingSizePercentage;
+              
+              childNode.data.element.style.removeProperty('width')
+              childNode.data.element.style.removeProperty('height')              
+              
+              childNode.data.element.style[mSizeKey] = `${childNode.data.size}%`;
+            
+            });
+          }
+          // 2. Check the index of the node within the parent
+          const index = node.getRelativeIndex();
+          
+          // 3. Insert node children to node's parent (new) given index
+          tree.insertAt(node.data.parent.key, node.children, index);          
+          
+          // 4. remove empty wrapper node
+          if (node.data.type === 'wrapper' && node.children.length === 0) {          
+            tree.remove(node.key);
+          }
+          
+          // Must clean again since the tree structure changes
+          postSizeUpdate();
+        }
+      });
+
+      // Rebuild view
+      containerView.rebuildContainers();    
+      containerView.rebuildResizers();
+    }
+    
+    
+    // MAIN FUNCTION
+    if (isParallelWithParent) {
+      parallelSizeUpdate();
+    } else {
+      perpendicularSizeUpdate(); 
+    }
+
+    postSizeUpdate();
+
+    Array.from(areas).forEach((area) => {  
+      addDragBehavior(area);
+    });
+  }  
 
   function isOver(elements, e) {
     let hoveredElement = null; 

@@ -1,18 +1,23 @@
 class TreeNode {
-  constructor(key, data) {
+  constructor(key, data, children = []) {
     this.key = key
-    this.data = data;
-    this.children = [];
+    this.data = data; // parent, element, flexDirection, type, rect
+    this.children = children;
   }
 
   insert(node) {
+    // If node already exist in tree
+    if (node.data.parent) {
+      node.data.parent.children.splice(node.getRelativeIndex(), 1);
+    }
+
     this.children.push(node);
     node.data.parent = this;
   }
 
   // Index within parent children
   getRelativeIndex() {
-    if (this.key === 'root') return 'root'
+    if (this.key === 'root') return 0;
     const children = this.data.parent.children;
     return [...children].map((i) => i.key).indexOf(this.key);
   }
@@ -35,54 +40,66 @@ class Tree {
     node.data.parent = parentNode;
   }
 
-  insertAt(parentKey, nodes, index) {
-    const node = Array.isArray(nodes) ? nodes[0] : nodes;
-    const parentNode = this.findNode(parentKey);    
+  remove(nodeKey) {
+    const node = this.findNode(nodeKey);
+    const parent = node.data.parent;
 
-    const array = parentNode.children;
-    const prevArray = node.data.parent.children;
+    parent.children.splice(node.getRelativeIndex(), 1);
+  }
 
-    // remove node from previous parent
-    const prevNodeIndex = [...prevArray].map((i) => i.key).indexOf(node.key);
-    prevArray.splice(prevNodeIndex, 1);
+  insertAt(parentKey, node, index, callback) {
+    const nodes = Array.isArray(node) ? node : [node];
+    const parentNode = this.findNode(parentKey);
 
-    // assign to new parent
-    node.data.parent = parentNode;
-    if (Array.isArray(nodes)) {
-      if (index < 0) {
-        array.unshift(...nodes);
-      } else if (index > array.length) {
-        array.push(...nodes);
-      } else {
-        array.splice(index, 0, ...nodes);
+    nodes.forEach((cNode, i) => {      
+      let offset = 0;
+      const currentIndex = index + i;
+
+      // node, newParent, prevParent
+      callback?.(node, parentNode, node.data.parent);
+
+      // Case: Same parent and new relative index is greater than previous relative index
+      // Adding offset to counter act the deletion (moving the items back)
+      if (cNode.data.parent && cNode.data.parent.key === parentKey && currentIndex >= node.getRelativeIndex()) {        
+        offset = -1;
       }
-    } else {
-      if (index < 0) {
-        array.unshift(node);
-      } else if (index > array.length) {
-        array.push(node);
-      } else {
-        array.splice(index, 0, node);
+
+      if (cNode.data.parent) {
+        const prevArray = cNode.data.parent.children;
+        // remove node from previous parent
+        cNode.data.parent.children = [...prevArray].filter((aNode) => aNode.key !== cNode.key);
       }
-    }
-    
-    return array;
+
+      // assign to new parent
+      cNode.data.parent = parentNode;
+
+      if (currentIndex + offset < 0) {
+        parentNode.children.unshift();
+      } else if (currentIndex + offset > parentNode.children.length) {
+        parentNode.children.push(cNode);
+      } else {
+        parentNode.children.splice(currentIndex + offset, 0, cNode);
+      }
+    });
+
+        
+    return parentNode.children;
   }
   
-  insertBefore(parentKey, nodeKey, node) {
+  insertBefore(parentKey, nodeKey, node, callback) {
     const parentNode = this.findNode(parentKey);
     const array = parentNode.children;
 
     const siblingNodeIndex = [...array].map((i) => i.key).indexOf(nodeKey);
-    this.insertAt(parentKey, node, siblingNodeIndex);
+    this.insertAt(parentKey, node, siblingNodeIndex, callback);
   }
 
-  insertAfter(parentKey, nodeKey, node) {    
+  insertAfter(parentKey, nodeKey, node, callback) {    
     const parentNode = this.findNode(parentKey);    
     const array = parentNode.children;
 
     const siblingNodeIndex = [...array].map((i) => i.key).indexOf(nodeKey);
-    this.insertAt(parentKey, node, siblingNodeIndex + 1);
+    this.insertAt(parentKey, node, siblingNodeIndex + 1, callback);
   }
   
   move(parentKey, nodeKey, index) {

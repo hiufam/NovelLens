@@ -133,7 +133,7 @@ function initResizers () {
             const nextContainerSize = nextContainerOriginSize - offsetPosition * prevResizeDirection;      
             
             // Add lower bound for resizing
-            if (prevContainerSize / parentContainerSize > 0.1 && nextContainerSize / parentContainerSize > 0.1) {
+            if (prevContainerSize / parentContainerSize > 0.02 && nextContainerSize / parentContainerSize > 0.02) {
               // Change size
               prevContainer.style[sizeKey] = prevContainerSize + 'px';
               nextContainer.style[sizeKey] = nextContainerSize + 'px';
