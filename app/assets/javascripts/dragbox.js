@@ -122,7 +122,7 @@
       const wrapperNode = new TreeNode(`${overedElementNodeId}${draggingElementNodeId}`, {
         flexDirection: sizeKey === 'width' ? 'row' : 'column',
         type: 'wrapper',
-        size: overedNode.data.size,
+        size: overedNode.data.size, // TODO: fix when overed node and dragging are from same parent
       });
       
       // 2. Create wrapper element
@@ -133,12 +133,12 @@
       const overedNodeIndex = overedNode.getRelativeIndex();
       tree.insertAt(overedNode.data.parent.key, wrapperNode, overedNodeIndex);
 
-      if (position === 'left' || position === 'bottom') {
+      if (position === 'left' || position === 'top') {
         wrapperNode.insert(draggingNode);
         wrapperNode.insert(overedNode);
       }
       
-      if (position === 'right' || position === 'top') {
+      if (position === 'right' || position === 'bottom') {
         wrapperNode.insert(overedNode);
         wrapperNode.insert(draggingNode);
       }

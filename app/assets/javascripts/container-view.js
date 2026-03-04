@@ -121,6 +121,14 @@ class ContainerView {
         node.data.rect = data.rect; 
         node.data.size = data.sizePercentage;
       }
+
+      
+      if (node.data.viewId === 'doc-viewer') {
+        const dragBox = dragContainerElement.getElementsByClassName('drag-box');
+        const docViewer = document.getElementById('doc-viewer');
+        
+        dragBox[0].append(docViewer)
+      }
     });
   }
 
