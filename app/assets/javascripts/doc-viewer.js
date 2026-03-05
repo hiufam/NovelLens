@@ -20,12 +20,5 @@ async function handleDocPickerChange(e) {
   const parser = new DOMParser();
   const htmlDoc = parser.parseFromString(data.html, 'text/html');
   
-  const docViewerDoc = document.createElement('div');
-  const docViewerHeight = docViewerBody.getBoundingClientRect().height;
-  
-  docViewerDoc.style.overflow = 'scroll';
-  docViewerDoc.style.height = `${docViewerHeight}px`;
-  docViewerDoc.innerHTML = htmlDoc.getElementsByTagName('body')[0].innerHTML;
-  
-  docViewerBody.append(docViewerDoc);
+  docViewerBody.innerHTML = htmlDoc.getElementsByTagName('body')[0].innerHTML;  
 }
