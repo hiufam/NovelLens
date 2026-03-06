@@ -1,4 +1,6 @@
 import { initResizers } from 'modules/resizer';
+import { DocViewer } from 'views/doc-viewer';
+import { TranslatorViewer } from 'views/translator-viewer';
 
 export class ContainerView {
   #tree
@@ -119,16 +121,23 @@ export class ContainerView {
         dragContainerElement.style[data.sizeKey] = data.sizePercentage;
         // get size percentage for node
         
-        node.data.rect = data.rect; 
         node.data.size = data.sizePercentage;
       }
 
       
       if (node.data.viewId) {        
         const dragBox = dragContainerElement.getElementsByClassName('drag-box');
-        const viewer = document.getElementById(node.data.viewId);
+        const viewer = document.getElementById(node.data.viewId); // Get viewer template
         
         dragBox[0].append(viewer)
+
+        if (node.data.viewId === 'doc-viewer') {
+          node.data.viewer = new DocViewer(dragBox[0]);
+        }
+
+        if (node.data.viewId === 'translator-viewer') {
+          node.data.viewer = new TranslatorViewer(dragBox[0]);
+        }
       }
     });
   }

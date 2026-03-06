@@ -1,19 +1,19 @@
 import { convertDocToHtml } from 'apis/conversion';
 import { home } from 'views/home';
-import { translatorViewer } from 'views/translator-viewer';
 
-class DocViewer {
+export class DocViewer {
   #highlightTimeOutFuncId = undefined;
-  
-  constructor() {
-    this.init();
+
+  constructor(container) {
+    this.container = container;
+    this.init(container);
   }
-  
+
   init() {
     this.#highlightTimeOutFuncId = undefined
-    this.docPicker = document.getElementById('doc-picker');
-    this.docViewerBody = document.getElementById('doc-viewer-body');
-    
+    this.docPicker = this.container.querySelector('.doc-picker');
+    this.docViewerBody = this.container.querySelector('.doc-viewer-body');
+
     this.docPicker.onchange = (e) => this.#handleDocPickerChange(e)
   }
 
@@ -31,13 +31,16 @@ class DocViewer {
     this.docViewerBody.innerHTML = htmlDoc.getElementsByTagName('body')[0].innerHTML;  
     
     // Add highlight event only when mouse is over document
-    document.addEventListener('selectionchange', this.#hightlightTextEvent.bind(this));
-      this.docViewerBody.addEventListener('mouseenter', () => {
-      document.addEventListener('selectionchange', this.#hightlightTextEvent.bind(this));
+    const selectEvent = this.#hightlightTextEvent.bind(this);
+
+    document.addEventListener('selectionchange', selectEvent);
+
+    this.docViewerBody.addEventListener('mouseenter', () => {
+      document.addEventListener('selectionchange', selectEvent);
     });
 
-    this.docViewerBody.addEventListener('mouseleave', () => {
-      document.removeEventListener('selectionchange', this.#hightlightTextEvent.bind(this));
+    this.docViewerBody.addEventListener('mouseleave', () => {      
+      document.removeEventListener('selectionchange', selectEvent);
     });
   }
 
@@ -49,8 +52,10 @@ class DocViewer {
   
       this.#highlightTimeOutFuncId = setTimeout(() => {
         home.highlightedText = selection.toString();
-        
-        translatorViewer.updateTextDisplay(selection.toString());          
+
+        const translatorViewerNodes = home.tree.findByData('viewId', 'translator-viewer');
+
+        translatorViewerNodes?.[0]?.data?.viewer.updateTextDisplay(selection.toString());
       }, 500);
       
     } else {
@@ -58,5 +63,3 @@ class DocViewer {
     }
   }
 }
-
-export const docViewer = new DocViewer();

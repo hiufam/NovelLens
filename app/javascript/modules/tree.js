@@ -139,6 +139,18 @@ export class Tree {
     return foundNode
   }
 
+  findByData(dataKey, data) {
+    let foundNodes = [];
+  
+    this.breadthFirstTraverse((node) => {      
+      if (node.data[dataKey] === data) {        
+        foundNodes.push(node);
+      }
+    });
+
+    return foundNodes;
+  }
+
   setNodeData(key, data) {
 
   }
