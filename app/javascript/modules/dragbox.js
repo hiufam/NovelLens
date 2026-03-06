@@ -1,8 +1,12 @@
-(function() {    
+import { TreeNode } from 'modules/tree';
+
+export function initDragbox(containerView, tree) {    
   const mainContainer = document.getElementById('main-container');
   const areas = document.getElementsByClassName('drag-box');
+
   let hoveredElement = null;
   let hoveredSide = null;
+  let pos1, pos2, pos3, pos4;
 
   function addDragBehavior(element) {
     let header = null;
@@ -277,4 +281,4 @@
   Array.from(areas).forEach((area) => {  
     addDragBehavior(area);
   });
-})()
+}

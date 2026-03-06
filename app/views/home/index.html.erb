@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <body>
-
     <div id='main'>
       <button>
         Toggle
@@ -13,13 +12,7 @@
     <div hidden>
       <%= render 'shared/drag-box' %>
       <%= render 'shared/doc-viewer' %>
+      <%= render 'shared/translator-viewer' %>
     </div>
-    
-    <%= javascript_include_tag "container-view" %>
-    <%= javascript_include_tag "tree" %>
-    <%= javascript_include_tag "home" %>
-    <%= javascript_include_tag "dragbox" %>
-    <%= javascript_include_tag "resizer" %>
-    <%= javascript_include_tag "doc-viewer" %>
   </body>
 </html>

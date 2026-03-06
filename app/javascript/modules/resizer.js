@@ -1,7 +1,8 @@
-function initResizers () {
+export function initResizers (tree) {
   function addResizingBehavior(resizer) {    
     const parentContainer = resizer.closest(".areas-container");  
     const flexDirection = Array.from(parentContainer.classList).includes("vertical-container") ? 'column' : 'row';  
+    
     let sizeKey = 'width';  
   
     if (flexDirection === 'column') {
@@ -208,5 +209,3 @@ function initResizers () {
     addResizingBehavior(resizer);
   });
 };
-
-initResizers();

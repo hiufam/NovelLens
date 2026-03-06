@@ -1,5 +1,6 @@
+import { initResizers } from 'modules/resizer';
 
-class ContainerView {
+export class ContainerView {
   #tree
   #resizers = [];
   #containers = [];
@@ -123,11 +124,11 @@ class ContainerView {
       }
 
       
-      if (node.data.viewId === 'doc-viewer') {
+      if (node.data.viewId) {        
         const dragBox = dragContainerElement.getElementsByClassName('drag-box');
-        const docViewer = document.getElementById('doc-viewer');
+        const viewer = document.getElementById(node.data.viewId);
         
-        dragBox[0].append(docViewer)
+        dragBox[0].append(viewer)
       }
     });
   }
@@ -192,7 +193,7 @@ class ContainerView {
     this.buildResizers();
 
     // re-enable behaviors
-    initResizers();
+    initResizers(this.tree);
   }
 
   checkParallel(nodeA, nodeB) {

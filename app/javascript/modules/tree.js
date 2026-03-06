@@ -1,4 +1,4 @@
-class TreeNode {
+export class TreeNode {
   constructor(key, data, children = []) {
     this.key = key
     this.data = data; // parent, element, flexDirection, type, rect
@@ -23,7 +23,7 @@ class TreeNode {
   }
 }
 
-class Tree {
+export class Tree {
   #root
   constructor(rootNode) {
     this.#root = rootNode ?? new TreeNode("root");
