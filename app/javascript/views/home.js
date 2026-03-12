@@ -6,6 +6,7 @@ import { ContainerView } from 'modules/container-view';
 import { DocViewer } from 'views/doc-viewer';
 import { TranslatorViewer } from 'views/translator-viewer';
 import { ImagesViewer } from 'views/images-viewer';
+import { WikiViewer } from 'views/wiki-viewer';
 
 class Home {
   highlightedText;
@@ -38,6 +39,10 @@ class Home {
         if (node.data.viewerId === 'images-viewer') {
           node.data.viewer = new ImagesViewer(container);
         }
+
+        if (node.data.viewerId === 'wiki-viewer') {
+          node.data.viewer = new WikiViewer(container);
+        }
       }
     })
 
@@ -55,7 +60,7 @@ class Home {
   
     const node2 = new TreeNode('2', { flexDirection: 'row', viewerId: 'translator-viewer' });
     const node3 = new TreeNode('3', { flexDirection: 'row', viewerId: 'images-viewer' });
-    const node4 = new TreeNode('4', { flexDirection: 'row' });
+    const node4 = new TreeNode('4', { flexDirection: 'row', viewerId: 'wiki-viewer' });
   
     node1.insert(node2);
     node1.insert(node3);

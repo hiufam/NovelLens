@@ -1,0 +1,11 @@
+.wiki-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .wiki-viewer-body {
+    flex-grow: 1;
+    overflow: auto;
+    margin-bottom: 2.5rem;
+  }
+}
