@@ -10,9 +10,9 @@ export class TranslatorViewer {
     this.viewContainer = this.container.querySelector('.translator-viewer'); 
     this.viewBodyContainer = this.container.querySelector('.translator-viewer-body');     
     this.textDisplay = this.container.querySelector('.translator-text-display')
-    this.dictionaryLookupButton = this.container.querySelector('.dictionary-lookup-button')
+    this.lookupButton = this.container.querySelector('.translator-lookup-button')
 
-    this.dictionaryLookupButton.addEventListener('click', this.#lookupWordEvent.bind(this))
+    this.lookupButton.addEventListener('click', this.#lookupWordEvent.bind(this))
   }
   
   updateTextDisplay(text) {
@@ -81,7 +81,9 @@ export class TranslatorViewer {
   }
 
   async #lookupWordEvent() {
-    const data = await getWordDefinition(this.textDisplay.textContent);
+    const response = await getWordDefinition(this.textDisplay.textContent);
+    const data = response.data;
+
     if (data?.length > 0) {
       this.displayTextDefinition(data[0]);
     }

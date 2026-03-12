@@ -14,7 +14,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      post "conversions/docx_to_html"
+      get "images", to: "dictionaries#get_images"
+      get "definitions", to: "dictionaries#get_definitions"
+
+      post "docx_to_html", to: "conversions#docx_to_html"
 
       resources :logger 
     end

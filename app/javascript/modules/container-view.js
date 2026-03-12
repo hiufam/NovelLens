@@ -125,20 +125,20 @@ export class ContainerView {
       }
 
       
-      if (node.data.viewId) {        
-        const dragBox = dragContainerElement.getElementsByClassName('drag-box');
-        const viewer = document.getElementById(node.data.viewId); // Get viewer template
+      // if (node.data.viewId) {        
+      //   const dragBox = dragContainerElement.getElementsByClassName('drag-box');
+      //   const viewer = document.getElementById(node.data.viewId); // Get viewer template
         
-        dragBox[0].append(viewer)
+      //   dragBox[0].append(viewer)
 
-        if (node.data.viewId === 'doc-viewer') {
-          node.data.viewer = new DocViewer(dragBox[0]);
-        }
+      //   if (node.data.viewId === 'doc-viewer') {
+      //     node.data.viewer = new DocViewer(dragBox[0]);
+      //   }
 
-        if (node.data.viewId === 'translator-viewer') {
-          node.data.viewer = new TranslatorViewer(dragBox[0]);
-        }
-      }
+      //   if (node.data.viewId === 'translator-viewer') {
+      //     node.data.viewer = new TranslatorViewer(dragBox[0]);
+      //   }
+      // }
     });
   }
 

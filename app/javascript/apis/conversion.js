@@ -5,7 +5,7 @@
  */
 export async function convertDocToHtml(formData) {
   try {    
-    const response = await fetch("/api/v1/conversions/docx_to_html", {
+    const response = await fetch("/api/v1/docx_to_html", {
       method: "POST",
       body: formData
     });

@@ -1,0 +1,29 @@
+.images-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .images-viewer-body {
+    display: flex;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    overflow: auto;
+    margin-bottom: 2.5rem;
+
+    justify-content: start;
+    align-content: start;
+     
+    .image-container {
+      display: flex;
+      /* flex-shrink: 1; */
+      height: 100%;
+
+      .image-display {
+        height: 100%;
+        aspect-ratio: 1;
+      }
+    }
+  }
+}

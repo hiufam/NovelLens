@@ -14,7 +14,7 @@ export class DocViewer {
     this.docPicker = this.container.querySelector('.doc-picker');
     this.docViewerBody = this.container.querySelector('.doc-viewer-body');
 
-    this.docPicker.onchange = (e) => this.#handleDocPickerChange(e)
+    this.docPicker.onchange = (e) => this.#handleDocPickerChange(e);
   }
 
   async #handleDocPickerChange(e) {    
@@ -53,9 +53,11 @@ export class DocViewer {
       this.#highlightTimeOutFuncId = setTimeout(() => {
         home.highlightedText = selection.toString();
 
-        const translatorViewerNodes = home.tree.findByData('viewId', 'translator-viewer');
+        const translatorViewerNodes = home.tree.findByData('viewerId', 'translator-viewer');
+        const imagesViewerNodes = home.tree.findByData('viewerId', 'images-viewer');
 
         translatorViewerNodes?.[0]?.data?.viewer.updateTextDisplay(selection.toString());
+        imagesViewerNodes?.[0]?.data?.viewer.updateTextDisplay(selection.toString());
       }, 500);
       
     } else {
