@@ -1,15 +1,24 @@
-import { initResizers } from 'modules/resizer';
-import { DocViewer } from 'views/doc-viewer';
-import { TranslatorViewer } from 'views/translator-viewer';
+import { addResizingBehavior } from 'modules/resizer';
+import { addDnDBehavior } from 'modules/dragbox';
 
 export class ContainerView {
   #tree
   #resizers = [];
   #containers = [];
+  options
 
-  constructor(tree) {
+  /**
+   * 
+   * @param {*} tree 
+   * @param {{
+   *  onDragEnded: () => void,
+   *  onResizingEnded: () => void,
+   * }} options 
+   */
+  constructor(tree, options = {}) {
     this.#tree = tree
-    
+    this.options = options;
+
     this.rootContainer = this.createContainer(tree.root);
     this.rootContainer.style.height = '100%';
     
@@ -118,43 +127,39 @@ export class ContainerView {
   
       if (parentNode?.children?.length > 0) {      
         const data = this.getDefaultChildContainerSizePercentage(parentNode);
-        dragContainerElement.style[data.sizeKey] = data.sizePercentage;
+        const sizePercentage = node?.data?.size ? `${parseFloat(node?.data?.size)}%` : data.sizePercentage
+
+        dragContainerElement.style[data.sizeKey] = sizePercentage;
         // get size percentage for node
         
-        node.data.size = data.sizePercentage;
+        node.data.size = sizePercentage;
       }
+    });
 
-      
-      // if (node.data.viewId) {        
-      //   const dragBox = dragContainerElement.getElementsByClassName('drag-box');
-      //   const viewer = document.getElementById(node.data.viewId); // Get viewer template
-        
-      //   dragBox[0].append(viewer)
-
-      //   if (node.data.viewId === 'doc-viewer') {
-      //     node.data.viewer = new DocViewer(dragBox[0]);
-      //   }
-
-      //   if (node.data.viewId === 'translator-viewer') {
-      //     node.data.viewer = new TranslatorViewer(dragBox[0]);
-      //   }
-      // }
+    const areas = document.getElementsByClassName('drag-box');  
+    addDnDBehavior(areas, this, this.tree, {
+      onEnded: this.options?.onDragEnded,
     });
   }
-
+  
   
   buildResizers() {
     this.#tree.breadthFirstTraverse((node, parentNode, isLastNode) => {
       if (node.key === 'root') return; 
-  
+      
       if (!isLastNode) {
         const resizer = this.createResizer(node, parentNode);
         node.data.element.after(resizer);
         this.#resizers.push(resizer);
       }
-    });  
-  }
+    });
 
+    const resizers = document.getElementsByClassName('resizer');    
+    addResizingBehavior(resizers, this.tree, {
+      onEnded: this.options?.onResizingEnded,
+    });
+  }
+  
   clearResizers() {
     this.#resizers.forEach((res) => {
       res.remove();
@@ -187,12 +192,14 @@ export class ContainerView {
   updateContainers(parentNode) {
     if (parentNode?.children?.length > 0) {
       const data = this.getDefaultChildContainerSizePercentage(parentNode);      
-
+      
       parentNode?.children.forEach((child) => {
         const element = child.data.element;
-        element.style[data.sizeKey] = data.sizePercentage;
+        const sizePercentage = child?.data?.size ? `${parseFloat(child?.data?.size)}%` : data.sizePercentage
+        
+        element.style[data.sizeKey] = sizePercentage;
 
-        child.data.size = data.sizePercentage;
+        child.data.size = sizePercentage;
       })
     }
   }
@@ -200,9 +207,6 @@ export class ContainerView {
   rebuildResizers() {
     this.clearResizers();
     this.buildResizers();
-
-    // re-enable behaviors
-    initResizers(this.tree);
   }
 
   checkParallel(nodeA, nodeB) {
@@ -215,9 +219,53 @@ export class ContainerView {
     return nodeADirection === nodeBDirection;
   }
 
-  saveView() {}
+  getView() {
+    const nodeKeys = new Map();
 
-  buildView() {
+    this.tree.breadthFirstTraverse((node) => {
+      const savedNode = {};
+
+      savedNode.key = node.key;
+      savedNode.children = [];
+      savedNode.data = {...node.data};
+
+      // Remove parent, element, viewer from saved node
+      delete savedNode.data?.parent;
+      delete savedNode.data?.element;
+      delete savedNode.data?.viewer;
+
+      nodeKeys.set(savedNode.key, savedNode);
+
+      let sizeKey = 'width';
+
+      const parentNodeElement = node.data.parent?.data?.element;
+      const nodeElement = node?.data?.element;
+
+      if (node?.data?.parent?.data?.flexDirection === 'column') {
+        sizeKey = 'height';
+      }
+      
+      // Assign new size value
+      if (parentNodeElement && nodeElement) {
+        const size = (nodeElement.getBoundingClientRect()[sizeKey] / parentNodeElement.getBoundingClientRect()[sizeKey]) * 100.0;
+        savedNode.data.size = size;
+      }
+      
+      if (node?.data?.parent) {
+        const savedParentNode = nodeKeys.get(node.data.parent.key);
+        savedParentNode.children.push(savedNode);
+      }
+    });
+
+    return nodeKeys.get('root');
+  }
+
+  loadView() {
+
+  }
+
+  buildView(options) {
+    this.options = options;
     this.buildContainers();
     this.buildResizers();
   }

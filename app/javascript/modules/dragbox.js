@@ -1,8 +1,8 @@
 import { TreeNode } from 'modules/tree';
 
-export function initDragbox(containerView, tree) {    
+export function addDnDBehavior(areas, containerView, tree, options = {}) {
+  const { onEnded } = options;    
   const mainContainer = document.getElementById('main-container');
-  const areas = document.getElementsByClassName('drag-box');
 
   let hoveredElement = null;
   let hoveredSide = null;
@@ -59,6 +59,10 @@ export function initDragbox(containerView, tree) {
 
       clonedHeader.remove();      
       handleDragEnd(hoveredElement, element, hoveredSide);
+      onEnded?.();
+
+      console.log(tree);
+      
     }
   }
 
@@ -194,7 +198,7 @@ export function initDragbox(containerView, tree) {
             prevParentNode.children.forEach((childNode) => {              
               if (childNode.data.type === 'wrapper') return;
               
-              childNode.data.flexDirection = newParentNode.children[0].data.flexDirection;
+              childNode.data.flexDirection = newParentNode.data.flexDirection;
               childNode.data.size = totalChildrenNodes === 1 ? remainingSizePercentage : parseFloat(childNode.data.size) / 100 * remainingSizePercentage;
               
               childNode.data.element.style.removeProperty('width')

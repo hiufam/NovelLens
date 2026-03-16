@@ -1,0 +1,23 @@
+.header-container {
+  display: flex;
+  padding-top: 6px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+
+  .header-tool {
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+    gap: 6px;
+
+    .header-tool-button {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+
+      padding: 6px;
+    }
+  }
+}

@@ -2,6 +2,7 @@ import "apis/conversion"
 import "apis/dictionary"
 
 import "views/home"
+import "views/header"
 import "views/translator-viewer"
 import "views/doc-viewer"
 import "views/images-viewer"
@@ -15,3 +16,7 @@ import "modules/resizer"
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
 import "controllers"
+
+// Initialize bootstrap tooltips
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
