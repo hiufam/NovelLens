@@ -1,11 +1,12 @@
 import { searchWiki } from "apis/browse"
+import { Viewer } from 'views/viewer';
 
-export class WikiViewer {
+export class WikiViewer extends Viewer {
   searchContainers = [];
 
-  constructor(container) {
-    this.container = container;   
-    this.init();    
+  constructor(container, node) {
+    super(container, node);    
+    this.init(container);
   }
   
   init() {   

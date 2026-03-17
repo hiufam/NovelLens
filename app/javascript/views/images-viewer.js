@@ -1,11 +1,12 @@
 import { getImages } from 'apis/images';
+import { Viewer } from 'views/viewer';
 
-export class ImagesViewer {
+export class ImagesViewer extends Viewer {
   imageContainers = [];
 
-  constructor(container) {
-    this.container = container;   
-    this.init();    
+  constructor(container, node) {
+    super(container, node);    
+    this.init(container);
   }
   
   init() {   

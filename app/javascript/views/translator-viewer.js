@@ -1,9 +1,10 @@
 import { getWordDefinition } from 'apis/dictionary';
+import { Viewer } from 'views/viewer';
 
-export class TranslatorViewer {
-  constructor(container) {
-    this.container = container;   
-    this.init();    
+export class TranslatorViewer extends Viewer {
+  constructor(container, node) {
+    super(container, node);    
+    this.init(container);
   }
   
   init() { 

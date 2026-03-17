@@ -11,8 +11,8 @@ export function addDnDBehavior(areas, containerView, tree, options = {}) {
   function addDragBehavior(element) {
     let header = null;
     let clonedHeader = null;
-    if (element.querySelector('.drag-header')) {
-      header = element.querySelector('.drag-header')
+    if (element.querySelector('.drag-area')) {
+      header = element.querySelector('.drag-area');
       header.onmousedown = onDragBegin;
     }
 
@@ -60,9 +60,6 @@ export function addDnDBehavior(areas, containerView, tree, options = {}) {
       clonedHeader.remove();      
       handleDragEnd(hoveredElement, element, hoveredSide);
       onEnded?.();
-
-      console.log(tree);
-      
     }
   }
 
@@ -167,69 +164,6 @@ export function addDnDBehavior(areas, containerView, tree, options = {}) {
       containerView.rebuildContainers();
     }
 
-    // Update size of containers when all containers have been placed correctly
-    function postSizeUpdate() {
-      tree.depthFirstTraverse((node) => {      
-        if (node.key === 'root') return;
-        // move wrapper children if wrapper only has 1 child
-        // move wrapper children if wrapper is parallel with parent and reappend children to new parent
-        const newParentNode = node.data.parent
-        if (
-          (node.data.type === 'wrapper' && containerView.checkParallel(node, newParentNode)) ||
-          (node.data.type === 'wrapper' && node.children.length === 1)
-        ) {          
-          // 1. Update size of children in new parent
-          const prevParentNode = node;
-          const mSizeKey = newParentNode.data.flexDirection === 'row' ? 'width' : 'height';
-          
-          if (prevParentNode.children.length > 0) {
-            const newParentSize = newParentNode.data.element.getBoundingClientRect()[mSizeKey];            
-            const remainingSize = newParentNode.children.reduce((acc, childNode) => {
-              if (childNode.key === prevParentNode.key) return acc;
-              
-              const rect = childNode.data.element.getBoundingClientRect();
-              
-              return acc - (rect[mSizeKey] + 8);
-            }, newParentSize);
-
-            const remainingSizePercentage = (remainingSize / newParentSize) * 100;
-            const totalChildrenNodes = prevParentNode.children.length || 1;
-            
-            prevParentNode.children.forEach((childNode) => {              
-              if (childNode.data.type === 'wrapper') return;
-              
-              childNode.data.flexDirection = newParentNode.data.flexDirection;
-              childNode.data.size = totalChildrenNodes === 1 ? remainingSizePercentage : parseFloat(childNode.data.size) / 100 * remainingSizePercentage;
-              
-              childNode.data.element.style.removeProperty('width')
-              childNode.data.element.style.removeProperty('height')              
-              
-              childNode.data.element.style[mSizeKey] = `${childNode.data.size}%`;
-            
-            });
-          }
-          // 2. Check the index of the node within the parent
-          const index = node.getRelativeIndex();
-          
-          // 3. Insert node children to node's parent (new) given index
-          tree.insertAt(node.data.parent.key, node.children, index);          
-          
-          // 4. remove empty wrapper node
-          if (node.data.type === 'wrapper' && node.children.length === 0) {          
-            tree.remove(node.key);
-          }
-          
-          // Must clean again since the tree structure changes
-          postSizeUpdate();
-        }
-      });
-
-      // Rebuild view
-      containerView.rebuildContainers();    
-      containerView.rebuildResizers();
-    }
-    
-    
     // MAIN FUNCTION
     if (isParallelWithParent) {
       parallelSizeUpdate();
@@ -237,7 +171,7 @@ export function addDnDBehavior(areas, containerView, tree, options = {}) {
       perpendicularSizeUpdate(); 
     }
 
-    postSizeUpdate();
+    containerView.formatView();
 
     Array.from(areas).forEach((area) => {  
       addDragBehavior(area);

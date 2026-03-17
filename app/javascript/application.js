@@ -1,7 +1,10 @@
+import "helpers/string"
+
 import "apis/conversion"
 import "apis/dictionary"
 
 import "views/home"
+import "views/viewer"
 import "views/header"
 import "views/translator-viewer"
 import "views/doc-viewer"

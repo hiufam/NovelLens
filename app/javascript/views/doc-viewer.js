@@ -1,11 +1,12 @@
 import { convertDocToHtml } from 'apis/conversion';
 import { home } from 'views/home';
+import { Viewer } from 'views/viewer';
 
-export class DocViewer {
+export class DocViewer extends Viewer {
   #highlightTimeOutFuncId = undefined;
 
-  constructor(container) {
-    this.container = container;
+  constructor(container, node) {
+    super(container, node);    
     this.init(container);
   }
 

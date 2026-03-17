@@ -1,5 +1,3 @@
-import { home } from 'views/home'
-
 class Header {
   constructor() {
     this.init();

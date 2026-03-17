@@ -6,17 +6,24 @@ import { TranslatorViewer } from 'views/translator-viewer';
 import { ImagesViewer } from 'views/images-viewer';
 import { WikiViewer } from 'views/wiki-viewer';
 
+const viewerMap = {
+  'doc-viewer': DocViewer,
+  'translator-viewer':TranslatorViewer,
+  'images-viewer': ImagesViewer,
+  'wiki-viewer': WikiViewer,
+}
+
 class Home {
   highlightedText;
   tree;
   containerView;
   
   constructor() {
-    this.tree = this.#getSavedView();    
+    this.tree = this.getSavedView();    
     this.containerView = new ContainerView(this.tree);    
     this.containerView.buildView({
-      onDragEnded: this.#saveView.bind(this),
-      onResizingEnded: this.#saveView.bind(this)
+      onDragEnded: this.saveView.bind(this),
+      onResizingEnded: this.saveView.bind(this)
     });
 
     this.tree.breadthFirstTraverse((node) => {      
@@ -26,31 +33,17 @@ class Home {
 
         container.append(viewer)
 
-        if (node.data.viewerId === 'doc-viewer') {
-          node.data.viewer = new DocViewer(container);
-        }
-  
-        if (node.data.viewerId === 'translator-viewer') {
-          node.data.viewer = new TranslatorViewer(container);
-        }
-
-        if (node.data.viewerId === 'images-viewer') {
-          node.data.viewer = new ImagesViewer(container);
-        }
-
-        if (node.data.viewerId === 'wiki-viewer') {
-          node.data.viewer = new WikiViewer(container);
-        }
+        node.data.viewer = Reflect.construct(viewerMap[node.data.viewerId], [container, node]);
       }
     })
   }
 
-  #saveView() {
+  saveView() {
     const view = this.containerView.getView();
     localStorage.setItem('view_config', JSON.stringify(view));
   }
 
-  #getSavedView() {
+  getSavedView() {
     const viewConfig = localStorage.getItem('view_config');    
     if (!viewConfig) return this.#getDefaultTree();
 
