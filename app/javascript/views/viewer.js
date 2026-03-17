@@ -12,6 +12,6 @@ export class Viewer {
   #closeViewerEvent() {    
     home.tree.remove(this.node.key);
     home.containerView.formatView();
-    home.saveView();
+    home.containerView.saveView();
   }
 }
