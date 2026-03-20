@@ -14,7 +14,7 @@ class Header {
 
   init() {
     this.saveViewButton = document.getElementById('save-view');
-    this.toggleDragAndDrog = document.getElementById('toggle-dnd');
+    this.toggleHeadersButton = document.getElementById('toggle-headers');
     this.viewersDropdown = document.getElementById('viewers-dropdown');
     this.viewersDropdownMenu = this.viewersDropdown.querySelector('.dropdown-menu');    
     
@@ -38,6 +38,8 @@ class Header {
       
       this.viewersDropdownMenu.append(listItem);
     });
+
+    this.toggleHeadersButton.addEventListener('click', this.#toggleHeaders.bind(this));
   }
   
   #dropItem(event, viewerId) {
@@ -72,6 +74,15 @@ class Header {
     dragBox.append(clonedViewer)
 
     node.data.viewer = Reflect.construct(viewerMap[node.data.viewerId].class, [dragBox, node]);
+  }
+
+  #toggleHeaders() {
+    home.toggleHeaders = !home.toggleHeaders;
+
+    const dragHeaders = document.getElementsByClassName('drag-header');
+    Array.from(dragHeaders).forEach((header) => {
+      header.hidden = !home.toggleHeaders;
+    });
   }
 }
 

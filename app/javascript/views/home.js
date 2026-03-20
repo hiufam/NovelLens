@@ -6,6 +6,8 @@ class Home {
   tree;
   containerView;
   
+  toggleHeaders = true;
+  
   constructor() {
     this.tree = ContainerView.getSavedView();    
     this.containerView = new ContainerView(this.tree);    
