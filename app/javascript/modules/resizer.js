@@ -73,6 +73,9 @@ function addBehavior(resizer, tree, options) {
       
       document.addEventListener('mouseup', closeaddDragBehavior)
       document.addEventListener('mousemove', elementDrag)
+
+      document.addEventListener('touchend', closeaddDragBehavior)
+      document.addEventListener('touchmove', elementDrag)
     }
     
     function resetDragPosition(newClientX) {
@@ -93,10 +96,18 @@ function addBehavior(resizer, tree, options) {
     }      
 
     function elementDrag(e) {
+      let clientPos;
+
+      if (e.type === 'touchmove') {
+        clientPos = e.touches[0];
+      } else {
+        clientPos = e;
+      }
+
       const resizerRect = resizer.getBoundingClientRect();
       const resizerPosition = sizeKey === 'width' ? resizerRect.x + resizerRect.width / 2 : resizerRect.y + resizerRect.height / 2;
 
-      const { clientX, clientY } = e;
+      const { clientX, clientY } = clientPos;
       const position = sizeKey === 'width' ? clientX : clientY
       const delta = position - prevPosition; // changes in x/y relative to prev cursor pos
       const resizeDirection = position - resizerPosition; // changes in x/y relative to resizer pos
@@ -175,6 +186,9 @@ function addBehavior(resizer, tree, options) {
       document.removeEventListener('mouseup', closeaddDragBehavior);  
       document.removeEventListener('mousemove', elementDrag);
 
+      document.removeEventListener('touchend', closeaddDragBehavior);  
+      document.removeEventListener('touchmove', elementDrag);
+
       let lastContainer = null;
 
       Array.from(childContainers).forEach((container) => {
@@ -210,4 +224,5 @@ function addBehavior(resizer, tree, options) {
   }
 
   resizer.addEventListener('mousedown', onResize())
+  resizer.addEventListener('touchstart', onResize())
 }

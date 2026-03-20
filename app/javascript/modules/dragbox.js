@@ -14,14 +14,23 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
     if (element.querySelector('.drag-area')) {
       header = element.querySelector('.drag-area');
       header.onmousedown = onDragBegin;
+      header.ontouchstart = onDragBegin;
     }
 
-    function onDragBegin(e) {
+    function onDragBegin(e) {      
       e.preventDefault();
-      areas = document.getElementsByClassName('drag-box');    
+      let clientPos;
 
-      pos3 = e.clientX;
-      pos4 = e.clientY;
+      if (e.type === 'touchstart') {
+        clientPos = e.touches[0];
+      } else {
+        clientPos = e;
+      }
+
+      pos3 = clientPos.clientX;
+      pos4 = clientPos.clientY;
+      
+      areas = document.getElementsByClassName('drag-box');
 
       const rect = element.getBoundingClientRect();      
 
@@ -35,29 +44,42 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
 
       document.onmouseup = onDragEnd;
       document.onmousemove = onDragging;
+
+      document.ontouchend = onDragEnd;
+      document.ontouchmove = onDragging;
     }
     
     function onDragging(e) {
-      e.preventDefault();
+      let clientPos;
+      if (e.type === 'touchmove') {
+        clientPos = e.touches[0];
+      } else {
+        e.preventDefault();
+        clientPos = e;
+      }
+      
       // calculate the new cursor position:
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
+      pos1 = pos3 - clientPos.clientX;
+      pos2 = pos4 - clientPos.clientY;
+      pos3 = clientPos.clientX;
+      pos4 = clientPos.clientY;
       // set the element's new position:
       clonedHeader.style.top = (clonedHeader.offsetTop - pos2) + 'px';
       clonedHeader.style.left = (clonedHeader.offsetLeft - pos1) + 'px';
     
       // Check if hover over an area
-      hoveredElement = isOver(Array.from(areas), e);
-      hoveredSide = getHoveredSide(hoveredElement, e);
+      hoveredElement = isOver(Array.from(areas), clientPos);
+      hoveredSide = getHoveredSide(hoveredElement, clientPos);
     }
     
     function onDragEnd() {
       /* stop moving when mouse button is released:*/
       document.onmouseup = null;
       document.onmousemove = null;
-
+      
+      document.ontouchend = null;
+      document.ontouchstart = null;
+      
       clonedHeader.remove();      
       handleDragEnd(hoveredElement, element, hoveredSide);
       onEnded?.();
