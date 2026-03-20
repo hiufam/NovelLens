@@ -10,4 +10,4 @@ pin_all_from "app/javascript/modules", under: "modules"
 pin_all_from "app/javascript/apis", under: "apis"
 pin_all_from "app/javascript/views", under: "views"
 pin_all_from "app/javascript/helpers", under: "helpers"
-
+pin_all_from "app/javascript/constants", under: "constants"

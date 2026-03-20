@@ -1,6 +1,21 @@
 <header>
   <div class="header-container">
     <div class="header-tool">
+
+      <div id="viewers-dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="viewers-menu" data-bs-toggle="dropdown" aria-expanded="false">
+          Draggables
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="viewers-menu">
+        </ul>
+      </div>
+
+      <button onclick="(() => {
+        localStorage.clear();
+      })();">
+        Reset Local Storage
+      </button>
+                                                                                                                                                                                                                                                                                             
       <button 
         id="save-view"
         class="header-tool-button"
@@ -13,6 +28,7 @@
           <path d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z"/>
         </svg>
       </button>
+
       <button 
         id="toggle-dnd"
         class="header-tool-button"

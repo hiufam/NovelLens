@@ -1,16 +1,5 @@
 import { ContainerView } from 'modules/container-view';
-
-import { DocViewer } from 'views/doc-viewer';
-import { TranslatorViewer } from 'views/translator-viewer';
-import { ImagesViewer } from 'views/images-viewer';
-import { WikiViewer } from 'views/wiki-viewer';
-
-const viewerMap = {
-  'doc-viewer': DocViewer,
-  'translator-viewer':TranslatorViewer,
-  'images-viewer': ImagesViewer,
-  'wiki-viewer': WikiViewer,
-}
+import { viewerMap } from 'constants/views'
 
 class Home {
   highlightedText;
@@ -30,10 +19,11 @@ class Home {
       if (node.data.viewerId) {
         const container = node.data.element.querySelector('.drag-box');        
         const viewer = document.getElementById(node.data.viewerId); // Get viewer template
+        const clonedViewer = viewer.cloneNode(true);
 
-        container.append(viewer)
+        container.append(clonedViewer)
 
-        node.data.viewer = Reflect.construct(viewerMap[node.data.viewerId], [container, node]);
+        node.data.viewer = Reflect.construct(viewerMap[node.data.viewerId].class, [container, node]);
       }
     })
   }

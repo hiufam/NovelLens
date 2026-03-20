@@ -1,12 +1,12 @@
 import { addResizingBehavior } from 'modules/resizer';
-import { addDnDBehavior } from 'modules/dragbox';
+import { addDragBoxBehavior } from 'modules/dragbox';
 
 import { TreeNode, Tree } from 'modules/tree';
 
 export class ContainerView {
-  #tree
-  #resizers = [];
-  #containers = [];
+  tree
+  resizers = [];
+  containers = [];
   options
 
   /**
@@ -18,7 +18,7 @@ export class ContainerView {
    * }} options 
    */
   constructor(tree, options = {}) {
-    this.#tree = tree
+    this.tree = tree
     this.options = options;
 
     this.rootContainer = this.createContainer(tree.root);
@@ -33,7 +33,7 @@ export class ContainerView {
   }
   
   get tree() {
-    return this.#tree
+    return this.tree
   }
   
   // parentNode must have element data
@@ -104,32 +104,46 @@ export class ContainerView {
     
     return resizer;
   }
+
+  /**
+   * Node must have existing container
+   * @param {*} node 
+   */
+  createDragArea(node) {
+    const dragContainerElement = node.data.element; 
+    
+    const clonedDragbox = this.dragbox.cloneNode(true);
+    clonedDragbox.id = `shared-dragbox-${node.key}`;
+
+    const dragArea = document.createElement('div');
+    dragArea.className = 'drag-area';
+
+    const dragTitle = document.createElement('span');
+
+    const title = clonedDragbox.getElementsByTagName('span')[0];
+    dragTitle.textContent = `Drag and drop - ${node.key}`;
+    
+    dragArea.append(dragTitle);
+    
+    title.replaceWith(dragArea);
+
+    dragContainerElement.append(clonedDragbox);    
+
+    addDragBoxBehavior(clonedDragbox, this, {
+      onEnded: this.options?.onDragEnded,
+    });
+  }
   
   buildContainers() {
-    this.#tree.breadthFirstTraverse((node, parentNode) => {
+    this.tree.breadthFirstTraverse((node, parentNode) => {
       if (node.key === 'root') return; 
 
       const dragContainerElement = this.createContainer(node);
-      const clonedDragbox = this.dragbox.cloneNode(true);
-
-      this.#containers.push(dragContainerElement);
-
-      const dragArea = document.createElement('div');
-      dragArea.className = 'drag-area';
-
-      const dragTitle = document.createElement('span');
-
+      
+      this.containers.push(dragContainerElement);
+      
       if (node.data.type !== 'wrapper') {
-        clonedDragbox.id = `shared-dragbox-${node.key}`;
-        const title = clonedDragbox.getElementsByTagName('span')[0];
-
-        dragTitle.textContent = `Drag and drop - ${node.key}`;
-        
-        dragArea.append(dragTitle);
-        
-        title.replaceWith(dragArea);
-
-        dragContainerElement.append(clonedDragbox);
+        this.createDragArea(node);
       }
   
       if (parentNode) {        
@@ -147,22 +161,17 @@ export class ContainerView {
         node.data.size = sizePercentage;
       }
     });
-
-    const areas = document.getElementsByClassName('drag-box');  
-    addDnDBehavior(areas, this, this.tree, {
-      onEnded: this.options?.onDragEnded,
-    });
   }
   
   
   buildResizers() {
-    this.#tree.breadthFirstTraverse((node, parentNode, isLastNode) => {
+    this.tree.breadthFirstTraverse((node, parentNode, isLastNode) => {
       if (node.key === 'root') return; 
       
       if (!isLastNode) {
         const resizer = this.createResizer(node, parentNode);
         node.data.element.after(resizer);
-        this.#resizers.push(resizer);
+        this.resizers.push(resizer);
       }
     });
 
@@ -173,15 +182,15 @@ export class ContainerView {
   }
   
   clearResizers() {
-    this.#resizers.forEach((res) => {
+    this.resizers.forEach((res) => {
       res.remove();
     })
-    this.#resizers = [];
+    this.resizers = [];
   }
 
   rebuildContainers() {
     const newContainers = [];
-    this.#tree.breadthFirstTraverse((node, _) => {
+    this.tree.breadthFirstTraverse((node, _) => {
       if (node.key === 'root') return;
 
       const parentNodeElement = node.data.parent.data.element;
@@ -192,13 +201,13 @@ export class ContainerView {
     });    
     const newContainersIds = newContainers.map((c) => c.id);    
 
-    this.#containers.forEach((container) => {
+    this.containers.forEach((container) => {
       if (!newContainersIds.includes(container.id)) {
         container.remove();
       }      
     });
 
-    this.#containers = newContainers;
+    this.containers = newContainers;
   }
 
   updateContainers(parentNode) {
@@ -213,6 +222,33 @@ export class ContainerView {
 
         child.data.size = sizePercentage;
       })
+    }
+  }
+
+  /**
+   * Updating drag and drop containers
+   * @param {*} overedNode 
+   * @param {*} draggingNode 
+   * @param {*} position 
+   * @returns 
+   */
+  updateDDContainers(overedNode, draggingNode, position) {    
+    if (overedNode.key === draggingNode.key || !position) return;
+
+    let isParallelWithParent = false;
+
+    if ((position === 'right' || position === 'left') && overedNode.data.parent.data.flexDirection === 'row') {
+      isParallelWithParent = true;
+    }
+
+    if ((position === 'top' || position === 'bottom') && overedNode.data.parent.data.flexDirection === 'column') {
+      isParallelWithParent = true;
+    }
+
+    if (isParallelWithParent) {
+      this.parallelSizeUpdate(draggingNode, overedNode, position);
+    } else {
+      this.perpendicularSizeUpdate(draggingNode, overedNode, position); 
     }
   }
 
@@ -283,9 +319,100 @@ export class ContainerView {
   }
 
   
+  parallelSizeUpdate(draggingNode, overedNode, position) {
+    // Update styles    
+    const draggingContainer = draggingNode.data.element;
+    const overedContainer = overedNode.data.element;
+
+    draggingContainer.classList = overedContainer.classList;
+
+    let sizeKey = 'width';
+    
+    if (position === 'top' || position === 'bottom') {
+      sizeKey = 'height';
+    }
+
+    if (position && overedNode.data.parent.key !== draggingNode.data.parent.key) {      
+      const originSize = overedContainer.getBoundingClientRect()[sizeKey]
+      const calculatedSize = originSize - 8; // 8 for size of resizer
+      
+      const totalSize = parseFloat(overedContainer.style[sizeKey]) * calculatedSize /  originSize;
+      const size = totalSize / 2;
+
+      // Remove previous size
+      draggingContainer.style.removeProperty('width')
+      draggingContainer.style.removeProperty('height')
+    
+      overedNode.data.size = size;
+      overedContainer.style[sizeKey] = `${size}%`;
+
+      draggingNode.data.size = size;
+      draggingContainer.style[sizeKey] = `${size}%`;
+    
+      this.rebuildContainers();
+    }
+
+    // Update position (parent is also updated)
+    if (position === 'right' || position === 'bottom') {
+      this.tree.insertAfter(overedNode.data.parent.key, overedNode.key, draggingNode);
+    }
+
+    if (position === 'left' || position === 'top') {
+      this.tree.insertBefore(overedNode.data.parent.key, overedNode.key, draggingNode);
+    }
+  }
+
+  perpendicularSizeUpdate(draggingNode, overedNode, position) {
+    let sizeKey = 'width';
+    
+    if (position === 'top' || position === 'bottom') {
+      sizeKey = 'height';
+    }
+    
+    // 1. Create wrapper node      
+    const wrapperNode = new TreeNode(`${overedNode.key}${draggingNode.key}-${crypto.randomUUID()}`, {
+      flexDirection: sizeKey === 'width' ? 'row' : 'column',
+      type: 'wrapper',
+      size: overedNode.data.size, // TODO: fix when overed node and dragging are from same parent
+    });
+    
+    // 2. Create wrapper element
+    const container = this.createContainer(wrapperNode);      
+    container.style[overedNode.data.parent.data.flexDirection === 'row' ? 'width' : 'height'] = `${parseFloat(overedNode.data.size)}%`;
+
+    // 3. Insert wrapper node into hovered node index
+    const overedNodeIndex = overedNode.getRelativeIndex();
+    this.tree.insertAt(overedNode.data.parent.key, wrapperNode, overedNodeIndex);
+
+    if (position === 'left' || position === 'top') {
+      wrapperNode.insert(draggingNode);
+      wrapperNode.insert(overedNode);
+    }
+    
+    if (position === 'right' || position === 'bottom') {
+      wrapperNode.insert(overedNode);
+      wrapperNode.insert(draggingNode);
+    }
+
+    // 4. Update size of children elements
+    const mSizeKey = wrapperNode.data.flexDirection === 'row' ? 'width' : 'height';
+    wrapperNode.children.forEach((childNode) => {              
+      if (childNode.data.type === 'wrapper') return;
+      
+      childNode.data.flexDirection = overedNode.data.flexDirection;
+      childNode.data.size = 50;
+      
+      childNode.data.element.style.removeProperty('width')
+      childNode.data.element.style.removeProperty('height')
+      childNode.data.element.style[mSizeKey] = `${50}%`;      
+    });      
+
+    this.rebuildContainers();
+  }
+  
   // Update size of containers when all containers have been placed correctly
   formatView() {
-    this.#tree.depthFirstTraverse((node) => {      
+    this.tree.depthFirstTraverse((node) => {      
       if (node.key === 'root') return;
       // move wrapper children if wrapper only has 1 child
       // move wrapper children if wrapper is parallel with parent and reappend children to new parent
@@ -293,7 +420,7 @@ export class ContainerView {
       if (
         (node.data.type === 'wrapper' && this.checkParallel(node, newParentNode)) ||
         (node.data.type === 'wrapper' && node.children.length === 1)
-      ) {          
+      ) {
         // 1. Update size of children in new parent
         const prevParentNode = node;
         const mSizeKey = newParentNode.data.flexDirection === 'row' ? 'width' : 'height';
@@ -328,11 +455,11 @@ export class ContainerView {
         const index = node.getRelativeIndex();
         
         // 3. Insert node children to node's parent (new) given index
-        this.#tree.insertAt(node.data.parent.key, node.children, index);          
+        this.tree.insertAt(node.data.parent.key, node.children, index);          
         
         // 4. remove empty wrapper node
         if (node.data.type === 'wrapper' && node.children.length === 0) {          
-          this.#tree.remove(node.key);
+          this.tree.remove(node.key);
         }
         
         // Must clean again since the tree structure changes
@@ -399,7 +526,7 @@ export class ContainerView {
   
     node1.insert(node2);
     node1.insert(node3);
-    node1.insert(node4);
+    // node1.insert(node4);
 
     return tree;
   }

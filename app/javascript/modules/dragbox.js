@@ -1,12 +1,12 @@
-import { TreeNode } from 'modules/tree';
-
-export function addDnDBehavior(areas, containerView, tree, options = {}) {
+export function addDragBoxBehavior(area, containerView, options = {}) {
   const { onEnded } = options;    
   const mainContainer = document.getElementById('main-container');
 
   let hoveredElement = null;
   let hoveredSide = null;
   let pos1, pos2, pos3, pos4;
+  let areas;
+  let tree = containerView.tree;
 
   function addDragBehavior(element) {
     let header = null;
@@ -18,6 +18,7 @@ export function addDnDBehavior(areas, containerView, tree, options = {}) {
 
     function onDragBegin(e) {
       e.preventDefault();
+      areas = document.getElementsByClassName('drag-box');    
 
       pos3 = e.clientX;
       pos4 = e.clientY;
@@ -63,119 +64,15 @@ export function addDnDBehavior(areas, containerView, tree, options = {}) {
     }
   }
 
-  function handleDragEnd(overedElement, draggingElement, position){    
-    const overedElementNodeId = overedElement.id.split('-').at(-1);
+  function handleDragEnd(overedElement, draggingElement, position) {
+    const overedElementNodeId = overedElement.id.split('-').slice(2).join('-');
     const overedNode = tree.findNode(overedElementNodeId);
-    const overedContainer = overedNode.data.element;
 
-    const draggingElementNodeId = draggingElement.id.split('-').at(-1);
+    const draggingElementNodeId = draggingElement.id.split('-').slice(2).join('-');    
     const draggingNode = tree.findNode(draggingElementNodeId);
-    const draggingContainer = draggingNode.data.element;
-    
-    if (overedElementNodeId === draggingElementNodeId || !position) return;
-    
-    let isParallelWithParent = false;
-    let sizeKey = 'width';
-    
-    if (position === 'top' || position === 'bottom') {
-      sizeKey = 'height';
-    }
-    
-    if ((position === 'right' || position === 'left') && overedNode.data.parent.data.flexDirection === 'row') {
-      isParallelWithParent = true;
-    }
 
-    if ((position === 'top' || position === 'bottom') && overedNode.data.parent.data.flexDirection === 'column') {
-      isParallelWithParent = true;
-    }
-
-    function parallelSizeUpdate() {
-      // Update styles
-      draggingContainer.classList = overedContainer.classList;
-
-      if (position && overedNode.data.parent.key !== draggingNode.data.parent.key) {      
-        const originSize = overedContainer.getBoundingClientRect()[sizeKey]
-        const calculatedSize = originSize - 8; // 8 for size of resizer
-        
-        const totalSize = parseFloat(overedContainer.style[sizeKey]) * calculatedSize /  originSize;
-        
-        // Remove previous size
-        draggingContainer.style.removeProperty('width')
-        draggingContainer.style.removeProperty('height')
-      
-        overedNode.data.size = totalSize / 2;
-        overedContainer.style[sizeKey] = `${overedNode.data.size}%`;
-
-        draggingNode.data.size = totalSize / 2;
-        draggingContainer.style[sizeKey] = `${draggingNode.data.size}%`;
-      
-        containerView.rebuildContainers();
-      }
-
-      // Update position (parent is also updated)
-      if (position === 'right' || position === 'bottom') {
-        tree.insertAfter(overedNode.data.parent.key, overedNode.key, draggingNode);
-      }
-
-      if (position === 'left' || position === 'top') {
-        tree.insertBefore(overedNode.data.parent.key, overedNode.key, draggingNode);
-      }
-    }
-
-    function perpendicularSizeUpdate() {
-      // 1. Create wrapper node      
-      const wrapperNode = new TreeNode(`${overedElementNodeId}${draggingElementNodeId}`, {
-        flexDirection: sizeKey === 'width' ? 'row' : 'column',
-        type: 'wrapper',
-        size: overedNode.data.size, // TODO: fix when overed node and dragging are from same parent
-      });
-      
-      // 2. Create wrapper element
-      const container = containerView.createContainer(wrapperNode);      
-      container.style[overedNode.data.parent.data.flexDirection === 'row' ? 'width' : 'height'] = `${parseFloat(overedNode.data.size)}%`;
-
-      // 3. Insert wrapper node into hovered node index
-      const overedNodeIndex = overedNode.getRelativeIndex();
-      tree.insertAt(overedNode.data.parent.key, wrapperNode, overedNodeIndex);
-
-      if (position === 'left' || position === 'top') {
-        wrapperNode.insert(draggingNode);
-        wrapperNode.insert(overedNode);
-      }
-      
-      if (position === 'right' || position === 'bottom') {
-        wrapperNode.insert(overedNode);
-        wrapperNode.insert(draggingNode);
-      }
-
-      // 4. Update size of children elements
-      const mSizeKey = wrapperNode.data.flexDirection === 'row' ? 'width' : 'height';
-      wrapperNode.children.forEach((childNode) => {              
-        if (childNode.data.type === 'wrapper') return;
-        
-        childNode.data.flexDirection = overedNode.data.flexDirection;
-        childNode.data.size = 50;
-        
-        childNode.data.element.style.removeProperty('width')
-        childNode.data.element.style.removeProperty('height')
-        childNode.data.element.style[mSizeKey] = `${50}%`;      
-      });      
-
-      containerView.rebuildContainers();
-    }
-
-    // MAIN FUNCTION
-    if (isParallelWithParent) {
-      parallelSizeUpdate();
-    } else {
-      perpendicularSizeUpdate(); 
-    }
-
+    containerView.updateDDContainers(overedNode, draggingNode, position);
     containerView.formatView();
-
-    Array.from(areas).forEach((area) => {  
-      addDragBehavior(area);
-    });
   }  
 
   function isOver(elements, e) {
@@ -215,8 +112,5 @@ export function addDnDBehavior(areas, containerView, tree, options = {}) {
     if (right - offset < x && x < right) return 'right';
     return;
   }
-  
-  Array.from(areas).forEach((area) => {  
-    addDragBehavior(area);
-  });
+  addDragBehavior(area);
 }

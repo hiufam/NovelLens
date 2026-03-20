@@ -1,4 +1,5 @@
 import "helpers/string"
+import "helpers/elements"
 
 import "apis/conversion"
 import "apis/dictionary"
@@ -15,6 +16,8 @@ import "modules/tree"
 import "modules/container-view"
 import "modules/dragbox"
 import "modules/resizer"
+
+import "constants/views"
 
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"

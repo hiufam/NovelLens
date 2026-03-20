@@ -48,9 +48,11 @@ function addBehavior(resizer, tree, options) {
     let nextContainerIndex = undefined;
     let prevContainerIndex = undefined;
     
-    resizerIndex = Number(resizer.id.split('-')[2]);
-    parentKey = resizer.id.split('-')[1];   
+    const splitedId = resizer.id.split('-')
 
+    resizerIndex = Number(splitedId[splitedId.length - 1]);
+    parentKey = splitedId.slice(1, -1).join('-');
+    
     function dragMouseDown(e) {
       e.preventDefault();
       const { clientX, clientY } = e;

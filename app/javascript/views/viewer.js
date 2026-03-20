@@ -6,7 +6,7 @@ export class Viewer {
     this.node = node;
     this.closeButton = container.querySelector('.close-button');    
   
-    this.closeButton.addEventListener('click', this.#closeViewerEvent.bind(this));
+    this.closeButton?.addEventListener('click', this.#closeViewerEvent.bind(this));
   }
 
   #closeViewerEvent() {    
