@@ -60,7 +60,7 @@ export class Tree {
 
       // Case: Same parent and new relative index is greater than previous relative index
       // Adding offset to counter act the deletion (moving the items back)
-      if (cNode.data.parent && cNode.data.parent.key === parentKey && currentIndex >= node.getRelativeIndex()) {        
+      if (cNode.data.parent && cNode.data.parent.key === parentKey && currentIndex > node.getRelativeIndex()) {        
         offset = -1;
       }
 

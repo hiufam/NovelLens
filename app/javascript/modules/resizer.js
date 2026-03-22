@@ -54,8 +54,15 @@ function addBehavior(resizer, tree, options) {
     parentKey = splitedId.slice(1, -1).join('-');
     
     function dragMouseDown(e) {
-      e.preventDefault();
-      const { clientX, clientY } = e;
+      let clientPos;
+      if (e.type === 'touchstart') {
+        clientPos = e.touches[0];
+      } else {
+        e.preventDefault();
+        clientPos = e;
+      }
+      
+      const { clientX, clientY } = clientPos;
       originPosition = sizeKey === 'width' ? clientX : clientY;
       
       // Initialize some values

@@ -370,7 +370,7 @@ export class ContainerView {
     }
     
     // 1. Create wrapper node      
-    const wrapperNode = new TreeNode(`${overedNode.key}${draggingNode.key}-${crypto.randomUUID()}`, {
+    const wrapperNode = new TreeNode(`${overedNode.key}${draggingNode.key}-${uuid.v4()}`, {
       flexDirection: sizeKey === 'width' ? 'row' : 'column',
       type: 'wrapper',
       size: overedNode.data.size, // TODO: fix when overed node and dragging are from same parent
@@ -399,7 +399,7 @@ export class ContainerView {
     wrapperNode.children.forEach((childNode) => {              
       if (childNode.data.type === 'wrapper') return;
       
-      childNode.data.flexDirection = overedNode.data.flexDirection;
+      childNode.data.flexDirection = 'row';
       childNode.data.size = 50;
       
       childNode.data.element.style.removeProperty('width')
@@ -441,7 +441,7 @@ export class ContainerView {
           prevParentNode.children.forEach((childNode) => {              
             if (childNode.data.type === 'wrapper') return;
             
-            childNode.data.flexDirection = newParentNode.data.flexDirection;
+            childNode.data.flexDirection = 'row';
             childNode.data.size = totalChildrenNodes === 1 ? remainingSizePercentage : parseFloat(childNode.data.size) / 100 * remainingSizePercentage;
             
             childNode.data.element.style.removeProperty('width')

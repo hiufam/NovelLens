@@ -18,6 +18,8 @@ class Header {
     this.viewersDropdown = document.getElementById('viewers-dropdown');
     this.viewersDropdownMenu = this.viewersDropdown.querySelector('.dropdown-menu');    
     
+    this.viewersDropdownInstance = bootstrap.Dropdown.getOrCreateInstance(this.viewersDropdown);
+    
     // Iterate over viewrMap to craete dropdown item for view menu
     // <li><a class="dropdown-item" href="#">Action</a></li>
     Object.entries((viewerMap)).forEach(entry => {
@@ -31,6 +33,7 @@ class Header {
       
       // Add drag and drop behavior
       addDndBehavior(dropwDownItem, {
+        onStart: () => this.viewersDropdownInstance.hide(),
         onEnded: (_, event) => this.#dropItem(event, entry[0]),
       })
       
@@ -41,25 +44,26 @@ class Header {
 
     this.toggleHeadersButton.addEventListener('click', this.#toggleHeaders.bind(this));
   }
-  
+
   #dropItem(event, viewerId) {
     const areas = Array.from(document.getElementsByClassName('drag-box'));  
+
     const overedElement = isOver(areas, event);
     const position = getHoveredSide(overedElement, event);
     
     if (!position) return;
-    
+
     // Add new node to tree
-    const node = new TreeNode(crypto.randomUUID(), { viewerId: viewerId });
-    const wrapperNode = new TreeNode(crypto.randomUUID(), { type: 'wrapper' });
-    
+    const node = new TreeNode(uuid.v4(), { viewerId: viewerId });
+    const wrapperNode = new TreeNode(uuid.v4(), { type: 'wrapper' });
+
     home.containerView.createContainer(wrapperNode);
     home.containerView.createContainer(node);
     
     wrapperNode.insert(node)
     home.tree.root.insert(wrapperNode);
 
-    const overedElementNodeId = overedElement.id.split('-').at(-1);
+    const overedElementNodeId = overedElement.id.split('-').slice(2).join('-');
     const overedNode = home.tree.findNode(overedElementNodeId);
 
     home.containerView.createDragArea(node);
@@ -74,6 +78,8 @@ class Header {
     dragBox.append(clonedViewer)
 
     node.data.viewer = Reflect.construct(viewerMap[node.data.viewerId].class, [dragBox, node]);
+
+    home.containerView.saveView();
   }
 
   #toggleHeaders() {

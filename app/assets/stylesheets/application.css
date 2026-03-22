@@ -10,6 +10,7 @@
  */
 #main-container {
   height: calc(100vh - 4rem);
+  touch-action: none;
 }
 #main {
   display: flex;

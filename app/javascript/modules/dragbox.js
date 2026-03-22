@@ -14,7 +14,7 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
     if (element.querySelector('.drag-area')) {
       header = element.querySelector('.drag-area');
       header.onmousedown = onDragBegin;
-      header.ontouchstart = onDragBegin;
+      header.addEventListener('touchstart', onDragBegin.bind(this), { passive: false });
     }
 
     function onDragBegin(e) {      
@@ -29,8 +29,6 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
 
       pos3 = clientPos.clientX;
       pos4 = clientPos.clientY;
-      
-      areas = document.getElementsByClassName('drag-box');
 
       const rect = element.getBoundingClientRect();      
 
@@ -39,22 +37,24 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
       clonedHeader.style.position = 'absolute';
       clonedHeader.style.top = rect.top + 'px';
       clonedHeader.style.left = rect.left + 'px';
-      
+      clonedHeader.style.zIndex = 100;
+
       mainContainer.append(clonedHeader);
 
       document.onmouseup = onDragEnd;
       document.onmousemove = onDragging;
 
       document.ontouchend = onDragEnd;
-      document.ontouchmove = onDragging;
+      document.addEventListener('touchmove', onDragging.bind(this), { passive: false });
     }
     
     function onDragging(e) {
+      e.preventDefault();
+
       let clientPos;
       if (e.type === 'touchmove') {
         clientPos = e.touches[0];
       } else {
-        e.preventDefault();
         clientPos = e;
       }
       
@@ -67,30 +67,45 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
       clonedHeader.style.top = (clonedHeader.offsetTop - pos2) + 'px';
       clonedHeader.style.left = (clonedHeader.offsetLeft - pos1) + 'px';
     
+    }
+    
+    function onDragEnd(e) {
+      let clientPos;
+
+      if (e.type === 'touchend') {
+        clientPos = e.changedTouches[0];
+      } else {
+        e.preventDefault();
+        clientPos = e;
+      }
+
+      areas = document.getElementsByClassName('drag-box');
+      
       // Check if hover over an area
       hoveredElement = isOver(Array.from(areas), clientPos);
       hoveredSide = getHoveredSide(hoveredElement, clientPos);
-    }
-    
-    function onDragEnd() {
+      
+      handleDragEnd(hoveredElement, element, hoveredSide);
+      onEnded?.();
+      
+      clonedHeader.remove();
+      
       /* stop moving when mouse button is released:*/
       document.onmouseup = null;
       document.onmousemove = null;
       
       document.ontouchend = null;
       document.ontouchstart = null;
-      
-      clonedHeader.remove();      
-      handleDragEnd(hoveredElement, element, hoveredSide);
-      onEnded?.();
     }
   }
-
+  
   function handleDragEnd(overedElement, draggingElement, position) {
-    const overedElementNodeId = overedElement.id.split('-').slice(2).join('-');
-    const overedNode = tree.findNode(overedElementNodeId);
+    if (!overedElement || !draggingElement) return;    
 
-    const draggingElementNodeId = draggingElement.id.split('-').slice(2).join('-');    
+    const overedElementNodeId = overedElement.id.split('-').slice(2).join('-');
+    const draggingElementNodeId = draggingElement.id.split('-').slice(2).join('-');
+
+    const overedNode = tree.findNode(overedElementNodeId);
     const draggingNode = tree.findNode(draggingElementNodeId);
 
     containerView.updateDDContainers(overedNode, draggingNode, position);
@@ -120,13 +135,13 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
     if (!element) return;
 
     const rect = element.getBoundingClientRect();      
-
+   
     var x = e.clientX,
-        y = e.clientY; 
+    y = e.clientY;
     var left = rect.x,
-        top = rect.y,
-        right = left + rect.width,
-        bottom = top + rect.height;
+    top = rect.y,
+    right = left + rect.width,
+    bottom = top + rect.height;
     
     if (top < y && y < top + offset) return 'top';
     if (bottom - offset < y && y < bottom) return 'bottom';

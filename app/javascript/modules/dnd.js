@@ -7,15 +7,15 @@ export function addDndBehavior(element, options) {
   let pos1, pos2, pos3, pos4;
 
   element.onmousedown = onDragBegin;
-  element.ontouchstart = onDragBegin;
+  element.addEventListener('touchstart', onDragBegin.bind(this), { passive: false });
 
   function onDragBegin(e) {
+    e.preventDefault();
     let clientPos;
 
     if (e.type === 'touchstart') {
       clientPos = e.touches[0];
     } else {
-      e.preventDefault();
       clientPos = e;
     }
 
@@ -39,17 +39,18 @@ export function addDndBehavior(element, options) {
     document.onmousemove = onDragging;
 
     document.ontouchend = onDragEnd;
-    document.ontouchmove = onDragging;
+    document.addEventListener('touchmove', onDragging.bind(this), { passive: false });
 
     onStart?.(clonedElement);
   }
 
   function onDragging(e) {
+    e.preventDefault();
+
     let clientPos;
     if (e.type === 'touchmove') {
       clientPos = e.touches[0];
     } else {
-      e.preventDefault();
       clientPos = e;
     }
 
@@ -67,6 +68,8 @@ export function addDndBehavior(element, options) {
   }
     
   function onDragEnd(e) {
+    e.preventDefault();
+
     /* stop moving when mouse button is released:*/
     if (e.type === 'touchend') {      
       onEnded?.(clonedElement, e.changedTouches[0]);
