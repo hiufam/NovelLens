@@ -1,14 +1,15 @@
-import { viewerMap } from 'constants/views'
+import { viewerMap } from '../constants/views';
+import { isOver, getHoveredSide } from '../helpers/elements';
 
-import { isOver, getHoveredSide } from 'helpers/elements'
+import { addDndBehavior } from '../modules/dnd';
+import { TreeNode } from '../modules/tree';
 
-import { addDndBehavior } from 'modules/dnd';
-import { TreeNode } from 'modules/tree';
+import { home, classViewerMap } from '../views/home';
 
-import { home } from 'views/home';
+import { v4 as uuidv4 } from 'uuid';
 
 class Header {
-  constructor() {
+  constructor() {    
     this.init();
   }
 
@@ -77,7 +78,7 @@ class Header {
 
     dragBox.append(clonedViewer)
 
-    node.data.viewer = Reflect.construct(viewerMap[node.data.viewerId].class, [dragBox, node]);
+    node.data.viewer = Reflect.construct(classViewerMap[node.data.viewerId].class, [dragBox, node]);
 
     home.containerView.saveView();
   }

@@ -1,5 +1,25 @@
 import { ContainerView } from '../modules/container-view';
-import { viewerMap } from '../constants/views'
+
+import { DocViewer } from '../views/doc-viewer';
+import { TranslatorViewer } from '../views/translator-viewer';
+import { ImagesViewer } from '../views/images-viewer';
+import { WikiViewer } from '../views/wiki-viewer';
+
+export const classViewerMap = {
+  'doc-viewer': {
+    class: DocViewer
+  },
+  'translator-viewer': {
+    class: TranslatorViewer
+  },
+  'images-viewer': {
+    class: ImagesViewer
+  },
+  'wiki-viewer': {
+    class: WikiViewer
+  },
+}
+
 
 class Home {
   highlightedText;
@@ -24,8 +44,8 @@ class Home {
         const clonedViewer = viewer.cloneNode(true);
 
         container.append(clonedViewer)
-
-        node.data.viewer = Reflect.construct(viewerMap[node.data.viewerId].class, [container, node]);
+        
+        node.data.viewer = Reflect.construct(classViewerMap[node.data.viewerId].class, [container, node]);        
       }
     })
   }
