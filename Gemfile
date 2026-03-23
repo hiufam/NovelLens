@@ -65,3 +65,6 @@ group :test do
 end
 
 gem "jsbundling-rails", "~> 1.3"
+
+# Installation guide: https://github.com/rails/cssbundling-rails
+gem "cssbundling-rails", "~> 1.4"
