@@ -3,6 +3,8 @@ import { addDragBoxBehavior } from 'modules/dragbox';
 
 import { TreeNode, Tree } from 'modules/tree';
 
+import { resizerSize } from 'constants/views'
+
 export class ContainerView {
   tree
   resizers = [];
@@ -46,7 +48,7 @@ export class ContainerView {
     
     const clientRect = containerElement.getBoundingClientRect();
     const size = clientRect[sizeKey];
-    const remainingSize = size - (parentNode.children.length - 1) * 8.0; // 8 is size of resizer    
+    const remainingSize = size - (parentNode.children.length - 1) * resizerSize;
 
     return {
       sizeKey,
@@ -334,7 +336,7 @@ export class ContainerView {
 
     if (position && overedNode.data.parent.key !== draggingNode.data.parent.key) {      
       const originSize = overedContainer.getBoundingClientRect()[sizeKey]
-      const calculatedSize = originSize - 8; // 8 for size of resizer
+      const calculatedSize = originSize - resizerSize;
       
       const totalSize = parseFloat(overedContainer.style[sizeKey]) * calculatedSize /  originSize;
       const size = totalSize / 2;
@@ -432,7 +434,7 @@ export class ContainerView {
             
             const rect = childNode.data.element.getBoundingClientRect();
             
-            return acc - (rect[mSizeKey] + 8);
+            return acc - (rect[mSizeKey] + resizerSize);
           }, newParentSize);
 
           const remainingSizePercentage = (remainingSize / newParentSize) * 100;

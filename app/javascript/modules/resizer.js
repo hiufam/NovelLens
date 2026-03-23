@@ -6,7 +6,7 @@ export function addResizingBehavior (resizers, tree, options) {  // Add behavior
 
 function addBehavior(resizer, tree, options) {
   const { onEnded } = options;
-  
+
   const parentContainer = resizer.closest(".areas-container");  
   const flexDirection = Array.from(parentContainer.classList).includes("vertical-container") ? 'column' : 'row';  
 
@@ -14,7 +14,7 @@ function addBehavior(resizer, tree, options) {
 
   if (flexDirection === 'column') {
     resizer.style.width = '100%';
-    resizer.style.height = '8px';
+    resizer.style.height = '12px';
     resizer.style.cursor = 'n-resize'
     sizeKey = 'height';
   }
@@ -55,10 +55,12 @@ function addBehavior(resizer, tree, options) {
     
     function dragMouseDown(e) {
       let clientPos;
+      e.preventDefault();
+      e.stopPropagation();
+
       if (e.type === 'touchstart') {
         clientPos = e.touches[0];
       } else {
-        e.preventDefault();
         clientPos = e;
       }
       
@@ -77,14 +79,14 @@ function addBehavior(resizer, tree, options) {
       resizersIds = Array.from(resizers).map(child => child.id);              
       
       parentContainerSize = parentContainer.getBoundingClientRect()[sizeKey];
-      
-      document.addEventListener('mouseup', closeaddDragBehavior)
-      document.addEventListener('mousemove', elementDrag)
 
-      document.addEventListener('touchend', closeaddDragBehavior)
-      document.addEventListener('touchmove', elementDrag)
+      document.addEventListener('mouseup', closeaddDragBehavior);
+      document.addEventListener('mousemove', elementDrag);
+
+      document.addEventListener('touchend', closeaddDragBehavior);
+      document.addEventListener('touchmove', elementDrag, { passive: false });
     }
-    
+
     function resetDragPosition(newClientX) {
       // Remove existing origin size due to change in prev and next containers
       prevContainerOriginSize = null;
@@ -93,8 +95,8 @@ function addBehavior(resizer, tree, options) {
       // reset origin and offset for new next and prev containers
       originPosition = newClientX;
       offsetPosition = 0;
-    }    
-    
+    }
+
     function setContainerRelativeSize(container) {
       if (container && parentContainer) {
         const containerSize = container.getBoundingClientRect()[sizeKey];
@@ -104,6 +106,8 @@ function addBehavior(resizer, tree, options) {
 
     function elementDrag(e) {
       let clientPos;
+      e.preventDefault();
+      e.stopPropagation();
 
       if (e.type === 'touchmove') {
         clientPos = e.touches[0];
@@ -231,5 +235,5 @@ function addBehavior(resizer, tree, options) {
   }
 
   resizer.addEventListener('mousedown', onResize())
-  resizer.addEventListener('touchstart', onResize())
+  resizer.addEventListener('touchstart', onResize(), { passive: false })
 }
