@@ -1,4 +1,3 @@
-# app/controllers/api/v1/conversions_controller.rb
 class Api::V1::ConversionsController < ApplicationController
   protect_from_forgery with: :null_session # WARNING: disabling CSRF protection for file upload 
 
@@ -25,12 +24,12 @@ class Api::V1::ConversionsController < ApplicationController
 
     system(["pandoc", conversion, extract_media, lua_filter].join(" "))
 
-    html = File.read(output_path)
-    media = File.binread(media_path) # IMPORTANT: Binary reading media zip file
+    html = File.exist?(output_path) ? File.read(output_path) : nil
+    media = File.exist?(media_path) ? File.binread(media_path) : nil # IMPORTANT: Binary reading media zip file
 
     cleanup_files(input_path, output_path, media_path)
 
-    render json: { html: html, media: Base64.encode64(media) }
+    render json: { html: html, media: media ? Base64.encode64(media) : nil }
   end
 
   private

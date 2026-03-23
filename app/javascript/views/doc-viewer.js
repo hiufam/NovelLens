@@ -33,44 +33,49 @@ export class DocViewer extends Viewer {
     const htmlDoc = parser.parseFromString(data.html, 'text/html');    
     const based64media = data.media;
 
-    // https://stackoverflow.com/questions/27239719/how-to-create-binary-blob-from-atob-currently-getting-different-bytes
-    var binary = atob(based64media)
-    var array = new Uint8Array(binary.length)
-    for( var i = 0; i < binary.length; i++ ) { array[i] = binary.charCodeAt(i) }
-    const blob = new Blob([array])
-
-    // get all entries from the zip
-    try {      
-      const reader = new zip.ZipReader(new zip.BlobReader(blob));
-      const entries = await reader.getEntries();
-
-      if (entries.length) {
-        const blobs = await Promise.all(entries.map((entry, index) => {          
-          const imageId = entry.filename.split("/")[1].split(".")[0] // Ex: "media/image1.jpeg"
-          
-          return entry.getData(new zip.BlobWriter() , {
-            onend: () => {              
-              images.push({
-                id: imageId,
-                entryIndex: index,
-                name: entry.filename,
-              });        
-            }
+    
+    if (based64media) {
+      // https://stackoverflow.com/questions/27239719/how-to-create-binary-blob-from-atob-currently-getting-different-bytes
+      var binary = atob(based64media)
+      var array = new Uint8Array(binary.length)
+      for( var i = 0; i < binary.length; i++ ) { array[i] = binary.charCodeAt(i) }
+      const blob = new Blob([array])
+  
+      // get all entries from the zip
+      try {      
+        const reader = new zip.ZipReader(new zip.BlobReader(blob));
+        const entries = await reader.getEntries();
+  
+        if (entries.length) {
+          const blobs = await Promise.all(entries.map((entry, index) => {          
+            const imageId = entry.filename.split("/")[1].split(".")[0] // Ex: "media/image1.jpeg"
+            
+            return entry.getData(new zip.BlobWriter() , {
+              onend: () => {              
+                images.push({
+                  id: imageId,
+                  entryIndex: index,
+                  name: entry.filename,
+                });        
+              }
+            });
+          }));
+  
+          images.forEach((image) => {
+            const blob = blobs[image.entryIndex];
+            const url = URL.createObjectURL(blob);
+            image.url = url;
           });
-        }));
-
-        images.forEach((image) => {
-          const blob = blobs[image.entryIndex];
-          const url = URL.createObjectURL(blob);
-          image.url = url;
-        });
+        }
+  
+        // close the ZipReader
+        await reader.close();
+      } catch (error) {
+        console.log(error);   
       }
-
-      // close the ZipReader
-      await reader.close();
-    } catch (error) {
-      console.log(error);      
     }
+
+
 
     
     this.docViewerBody.innerHTML = htmlDoc.getElementsByTagName('body')[0].innerHTML;  
