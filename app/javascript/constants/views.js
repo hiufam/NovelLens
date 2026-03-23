@@ -1,7 +1,7 @@
-import { DocViewer } from 'views/doc-viewer';
-import { TranslatorViewer } from 'views/translator-viewer';
-import { ImagesViewer } from 'views/images-viewer';
-import { WikiViewer } from 'views/wiki-viewer';
+import { DocViewer } from '../views/doc-viewer';
+import { TranslatorViewer } from '../views/translator-viewer';
+import { ImagesViewer } from '../views/images-viewer';
+import { WikiViewer } from '../views/wiki-viewer';
 
 export const resizerSize = 12.0;
 

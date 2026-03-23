@@ -1,5 +1,5 @@
-import { getImages } from 'apis/images';
-import { Viewer } from 'views/viewer';
+import { getImages } from '../apis/images';
+import { Viewer } from '../views/viewer';
 
 export class ImagesViewer extends Viewer {
   imageContainers = [];

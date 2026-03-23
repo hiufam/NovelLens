@@ -54,8 +54,8 @@ class Header {
     if (!position) return;
 
     // Add new node to tree
-    const node = new TreeNode(uuid.v4(), { viewerId: viewerId });
-    const wrapperNode = new TreeNode(uuid.v4(), { type: 'wrapper' });
+    const node = new TreeNode(uuidv4(), { viewerId: viewerId });
+    const wrapperNode = new TreeNode(uuidv4(), { type: 'wrapper' });
 
     home.containerView.createContainer(wrapperNode);
     home.containerView.createContainer(node);

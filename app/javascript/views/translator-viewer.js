@@ -1,5 +1,5 @@
-import { getWordDefinition } from 'apis/dictionary';
-import { Viewer } from 'views/viewer';
+import { getWordDefinition } from '../apis/dictionary';
+import { Viewer } from '../views/viewer';
 
 export class TranslatorViewer extends Viewer {
   constructor(container, node) {

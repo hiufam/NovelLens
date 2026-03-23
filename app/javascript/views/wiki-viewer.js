@@ -1,5 +1,5 @@
-import { searchWiki } from "apis/browse"
-import { Viewer } from 'views/viewer';
+import { searchWiki } from "../apis/browse"
+import { Viewer } from '../views/viewer';
 
 export class WikiViewer extends Viewer {
   searchContainers = [];

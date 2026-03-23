@@ -1,5 +1,5 @@
-import { ContainerView } from 'modules/container-view';
-import { viewerMap } from 'constants/views'
+import { ContainerView } from '../modules/container-view';
+import { viewerMap } from '../constants/views'
 
 class Home {
   highlightedText;

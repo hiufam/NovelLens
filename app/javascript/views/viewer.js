@@ -1,4 +1,4 @@
-import { home } from 'views/home';
+import { home } from '../views/home';
 
 export class Viewer {
   constructor(container, node) {

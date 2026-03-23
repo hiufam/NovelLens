@@ -1,9 +1,10 @@
-import { addResizingBehavior } from 'modules/resizer';
-import { addDragBoxBehavior } from 'modules/dragbox';
+import { addResizingBehavior } from '../modules/resizer';
+import { addDragBoxBehavior } from '../modules/dragbox';
 
-import { TreeNode, Tree } from 'modules/tree';
+import { TreeNode, Tree } from '../modules/tree';
 
-import { resizerSize } from 'constants/views'
+import { resizerSize } from '../constants/views';
+import { v4 as uuidv4 } from 'uuid';
 
 export class ContainerView {
   tree
@@ -33,11 +34,7 @@ export class ContainerView {
     
     this.dragbox = document.getElementById('shared-dragbox');
   }
-  
-  get tree() {
-    return this.tree
-  }
-  
+
   // parentNode must have element data
   getDefaultChildContainerSizePercentage(parentNode) {
     let sizeKey = 'width';
@@ -372,7 +369,7 @@ export class ContainerView {
     }
     
     // 1. Create wrapper node      
-    const wrapperNode = new TreeNode(`${overedNode.key}${draggingNode.key}-${uuid.v4()}`, {
+    const wrapperNode = new TreeNode(`${overedNode.key}${draggingNode.key}-${uuidv4()}`, {
       flexDirection: sizeKey === 'width' ? 'row' : 'column',
       type: 'wrapper',
       size: overedNode.data.size, // TODO: fix when overed node and dragging are from same parent

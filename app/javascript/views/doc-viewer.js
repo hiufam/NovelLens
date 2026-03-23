@@ -1,6 +1,8 @@
-import { convertDocToHtml } from 'apis/conversion';
-import { home } from 'views/home';
-import { Viewer } from 'views/viewer';
+import { convertDocToHtml } from '../apis/conversion';
+import { home } from '../views/home';
+import { Viewer } from '../views/viewer';
+
+import * as zip from "@zip.js/zip.js";
 
 export class DocViewer extends Viewer {
   #highlightTimeOutFuncId = undefined;
