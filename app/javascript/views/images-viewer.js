@@ -47,13 +47,23 @@ export class ImagesViewer extends Viewer {
   */
   displayImages(images) {
     // Remove existing image containers
+    if (this.providerTag) {
+      this.providerTag.remove();
+    }
+
     if (this.imageContainers.length > 0) {
       this.imageContainers.forEach((imgContainer) => {
         imgContainer.remove();
       });
-
+      
       this.imageContainers = [];
     }
+
+    this.providerTag = document.createElement('i');
+    this.providerTag.textContent = '* images provided by Pexel';
+
+    this.viewContainer.append(this.providerTag);    
+    this.viewContainer.insertBefore(this.providerTag, this.viewBodyContainer);
 
     images.forEach((image) => {
       const imageContainer = document.createElement('div');

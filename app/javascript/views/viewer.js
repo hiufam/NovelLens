@@ -1,6 +1,7 @@
 import { viewerMap } from '../constants/views';
 import { home, classViewerMap} from '../views/home';
 
+// BUG: upload file, create viewer, resize doc, resizer viewer, delete created viewer
 export class Viewer {
   moveEnabled = false;
   dragArea;
