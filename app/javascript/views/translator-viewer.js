@@ -48,10 +48,8 @@ export class TranslatorViewer extends Viewer {
     const defSearchContainer = document.createElement('div');
     defSearchContainer.classList = 'def-search-container';
 
-    if (data.phonetic) {
-      const textPhonetic = document.createElement('i');
-      textPhonetic.textContent = data.phonetic;
-    }
+    const textPhonetic = document.createElement('i');
+    textPhonetic.textContent = data.phonetic;
 
     defSearchContainer.append(textPhonetic);
 
