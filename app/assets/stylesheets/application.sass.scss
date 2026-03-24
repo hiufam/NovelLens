@@ -28,6 +28,26 @@ $secondary: #6bc384;
   );
 }
 
+.bg-orange {
+  background-color: $orange;
+}
+
+.bg-purple {
+  background-color: $purple;
+}
+
+.bg-teal {
+  background-color: $teal;
+}
+
+.bg-pink {
+  background-color: $pink;
+}
+
+.bg-transparent {
+  background-color: transparent;
+}
+
 #main-container {
   height: calc(100vh - 4rem);
   touch-action: none;
