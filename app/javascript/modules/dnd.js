@@ -22,16 +22,19 @@ export function addDndBehavior(element, options) {
     pos3 = clientPos.clientX;
     pos4 = clientPos.clientY;
 
-    const rect = element.getBoundingClientRect();      
-
     clonedElement = element.cloneNode(true); 
-    
-    clonedElement.style.zIndex = 100;
+
     clonedElement.style.position = 'absolute';
-    clonedElement.style.top = rect.top + 'px';
-    clonedElement.style.left = rect.left + 'px';
+    clonedElement.style.zIndex = 100;
     clonedElement.style.width = 'fit-content';
     clonedElement.style.height = 'fit-content';
+    clonedElement.style.backgroundColor = 'var(--bs-primary)';
+    clonedElement.style.color = 'white';
+    clonedElement.style.padding = '6px';
+    clonedElement.style.borderRadius = '6px';
+    clonedElement.style.boxShadow = '5px 6px #8888888b';      
+    clonedElement.style.top = clientPos.clientY - 36 + 'px';
+    clonedElement.style.left =  clientPos.clientX - 48 + 'px';
     
     body.append(clonedElement);
 
