@@ -10,14 +10,14 @@ export class TranslatorViewer extends Viewer {
   init() { 
     this.viewContainer = this.container.querySelector('.translator-viewer'); 
     this.viewBodyContainer = this.container.querySelector('.translator-viewer-body');     
-    this.textDisplay = this.container.querySelector('.translator-text-display')
+    this.textInput = this.container.querySelector('.translator-text-input')
     this.lookupButton = this.container.querySelector('.translator-lookup-button')
-
+    
     this.lookupButton.addEventListener('click', this.#lookupWordEvent.bind(this))
   }
   
   updateTextDisplay(text) {
-    this.textDisplay.textContent = text;          
+    this.textInput.value = text;          
   }
   
   /**
@@ -82,7 +82,7 @@ export class TranslatorViewer extends Viewer {
   }
 
   async #lookupWordEvent() {
-    const response = await getWordDefinition(this.textDisplay.textContent);
+    const response = await getWordDefinition(this.textInput.value);
     const data = response.data;
 
     if (data?.length > 0) {

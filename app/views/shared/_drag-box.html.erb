@@ -1,10 +1,26 @@
 <div id="shared-dragbox" class="drag-box">
   <div class="drag-header">
     <span>
-      Click here to move
+      View
     </span>
-    <button class="close-button">
-      x
-    </button>
+    <div class="drag-header-tools">
+      <button class="btn btn-custom tabs-button dropdown-toggle" type="button" id="tab-items" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-gear-fill" style="font-size: 1rem; display: flex; justify-content: center; align-items: center; color: white;"></i>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="tab-items" style="z-index: 100;">
+        <li><a class="dropdown-item move-button">
+          <i class="bi bi-arrows-move" style="font-size: 1rem; display: flex; justify-content: center; align-items: center; padding: 0.25rem;"></i>    
+          <span>Toggle Drag</span>
+        </a></li>
+        <li><a class="dropdown-item change-button">
+          <i class="bi bi-archive-fill" style="font-size: 1rem; display: flex; justify-content: center; align-items: center; padding: 0.25rem;"></i>    
+          <span>Change View</span>
+        </a></li>
+        <li><a class="dropdown-item close-button">
+          <i class="bi bi-x" style="font-size: 1.5rem; display: flex; justify-content: center; align-items: center;"></i>    
+          <span>Remove</span>
+        </a></li>
+      </ul>
+    </div>
   </div>
 </div>

@@ -11,16 +11,19 @@
   flex-direction: row;
 }
 .resizer {
-  width: 12px;
+  width: 8px;
   height: 100%;
-  background-color: seagreen;
+  background-color: var(--bs-secondary);
+  margin: 2px;
   cursor: e-resize;
+
+  border-radius: 6px;
 }
 .vertical-resizer {
-  width: 12px;
+  width: 8px;
   height: 100%;
 }
 .horizontal-resizer {
-  height: 12px;
+  height: 8px;
   width: 100%;  
 }

@@ -1,3 +1,5 @@
+import { resizerSize } from '../constants/views'
+
 export function addResizingBehavior (resizers, tree, options) {  // Add behaviors
   Array.from(resizers).forEach((resizer) => {
     addBehavior(resizer, tree, options);
@@ -14,7 +16,7 @@ function addBehavior(resizer, tree, options) {
 
   if (flexDirection === 'column') {
     resizer.style.width = '100%';
-    resizer.style.height = '12px';
+    resizer.style.height = `${resizerSize}px`;
     resizer.style.cursor = 'n-resize'
     sizeKey = 'height';
   }

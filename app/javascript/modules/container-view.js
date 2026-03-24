@@ -4,6 +4,8 @@ import { addDragBoxBehavior } from '../modules/dragbox';
 import { TreeNode, Tree } from '../modules/tree';
 
 import { resizerSize } from '../constants/views';
+import { viewerMap } from '../constants/views';
+
 import { v4 as uuidv4 } from 'uuid';
 
 export class ContainerView {
@@ -120,7 +122,7 @@ export class ContainerView {
     const dragTitle = document.createElement('span');
 
     const title = clonedDragbox.getElementsByTagName('span')[0];
-    dragTitle.textContent = `Drag and drop - ${node.key}`;
+    dragTitle.textContent = `${viewerMap[node.data.viewerId]?.name}`;
     
     dragArea.append(dragTitle);
     
@@ -128,7 +130,7 @@ export class ContainerView {
 
     dragContainerElement.append(clonedDragbox);    
 
-    addDragBoxBehavior(clonedDragbox, this, {
+    addDragBoxBehavior(node, clonedDragbox, this, {
       onEnded: this.options?.onDragEnded,
     });
   }

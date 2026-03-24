@@ -1,16 +1,16 @@
-export const resizerSize = 12.0;
+export const resizerSize = 8.0;
 
 export const viewerMap = {
   'doc-viewer': {
-    name: 'Document Viewer',
+    name: 'Document',
   },
   'translator-viewer': {
-    name: 'Translator Viewer',
+    name: 'Translator',
   },
   'images-viewer': {
-    name: 'Images Viewer',
+    name: 'Images',
   },
   'wiki-viewer': {
-    name: 'Wiki Viewer',
+    name: 'Wiki',
   },
 }

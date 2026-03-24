@@ -1,13 +1,21 @@
 .drag-header {
   display: flex;
   gap: 2px;
-  flex-wrap: wrap;
 
-  padding: 10px;
-  cursor: move;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+
   z-index: 10;
-  background-color: #d3d3d3;
+  background-color: var(--bs-primary);
   color: #fff;
+
+  .drag-header-tools {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+  }
 }
 .drag-box {
   display: flex;
@@ -19,4 +27,13 @@
   background-color: gainsboro;
   position: relative;
   overflow: hidden;
+
+  border-style: solid;
+  border-color: var(--bs-primary);
+  border-width: 1px;
+  border-radius: 6px;
+}
+
+.drag-area {
+  width: 100%;
 }

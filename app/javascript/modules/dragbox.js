@@ -1,4 +1,4 @@
-export function addDragBoxBehavior(area, containerView, options = {}) {
+export function addDragBoxBehavior(node, area, containerView, options = {}) {
   const { onEnded } = options;    
   const mainContainer = document.getElementById('main-container');
 
@@ -17,7 +17,9 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
       header.addEventListener('touchstart', onDragBegin.bind(this), { passive: false });
     }
 
-    function onDragBegin(e) {      
+    function onDragBegin(e) {
+      if (!node?.data?.moveEnabled) return;
+
       e.preventDefault();
       let clientPos;
 
@@ -30,22 +32,34 @@ export function addDragBoxBehavior(area, containerView, options = {}) {
       pos3 = clientPos.clientX;
       pos4 = clientPos.clientY;
 
-      const rect = element.getBoundingClientRect();      
-
+      
       clonedHeader = header.cloneNode(true); 
       
       clonedHeader.style.position = 'absolute';
-      clonedHeader.style.top = rect.top + 'px';
-      clonedHeader.style.left = rect.left + 'px';
       clonedHeader.style.zIndex = 100;
+      clonedHeader.style.width = 'fit-content';
+      clonedHeader.style.height = 'fit-content';
+      clonedHeader.style.backgroundColor = 'var(--bs-primary)';
+      clonedHeader.style.color = 'white';
+      clonedHeader.style.padding = '6px';
+      clonedHeader.style.borderRadius = '6px';
+      clonedHeader.style.boxShadow = '5px 6px #8888888b';
+      
+      const rect = clonedHeader.getBoundingClientRect();      
+      console.log(rect);
+      
+      clonedHeader.style.top = clientPos.clientY - 36 + 'px';
+      clonedHeader.style.left =  clientPos.clientX - 48 + 'px';
 
       mainContainer.append(clonedHeader);
 
-      document.onmouseup = onDragEnd;
-      document.onmousemove = onDragging;
-
-      document.ontouchend = onDragEnd;
-      document.addEventListener('touchmove', onDragging.bind(this), { passive: false });
+      if (node.data.moveEnabled) {
+        document.onmouseup = onDragEnd;
+        document.onmousemove = onDragging;
+  
+        document.ontouchend = onDragEnd;
+        document.addEventListener('touchmove', onDragging.bind(this), { passive: false });
+      }
     }
     
     function onDragging(e) {

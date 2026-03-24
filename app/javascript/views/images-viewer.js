@@ -12,7 +12,7 @@ export class ImagesViewer extends Viewer {
   init() {   
     this.viewContainer = this.container.querySelector('.images-viewer'); 
     this.viewBodyContainer = this.container.querySelector('.images-viewer-body');     
-    this.textDisplay = this.container.querySelector('.images-text-display')
+    this.textInput = this.container.querySelector('.images-text-input')
     this.lookupButton = this.container.querySelector('.images-lookup-button')
     this.imageSizeSlider = this.container.querySelector('#image-size-range')    
 
@@ -73,11 +73,11 @@ export class ImagesViewer extends Viewer {
   }
 
   updateTextDisplay(text) {
-    this.textDisplay.textContent = text;          
+    this.textInput.value = text;          
   }
 
   async #searchImageEvent() {
-    const response = await getImages({query: this.textDisplay.textContent});
+    const response = await getImages({query: this.textInput.value});
     const images = response?.data?.photos || [];
 
     this.displayImages(images);
