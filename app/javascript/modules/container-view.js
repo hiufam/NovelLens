@@ -116,10 +116,9 @@ export class ContainerView {
     const clonedDragbox = this.dragbox.cloneNode(true);
     clonedDragbox.id = `shared-dragbox-${node.key}`;
 
-    const dragArea = document.createElement('div');
-    dragArea.className = 'drag-area';
-
+    const dragArea = clonedDragbox.querySelector('.drag-area');
     const dragTitle = document.createElement('span');
+    dragTitle.classList.add('drag-title');
 
     const title = clonedDragbox.getElementsByTagName('span')[0];
     dragTitle.textContent = `${viewerMap[node.data.viewerId]?.name}`;

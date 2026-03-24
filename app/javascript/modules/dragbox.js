@@ -43,11 +43,7 @@ export function addDragBoxBehavior(node, area, containerView, options = {}) {
       clonedHeader.style.color = 'white';
       clonedHeader.style.padding = '6px';
       clonedHeader.style.borderRadius = '6px';
-      clonedHeader.style.boxShadow = '5px 6px #8888888b';
-      
-      const rect = clonedHeader.getBoundingClientRect();      
-      console.log(rect);
-      
+      clonedHeader.style.boxShadow = '5px 6px #8888888b';      
       clonedHeader.style.top = clientPos.clientY - 36 + 'px';
       clonedHeader.style.left =  clientPos.clientX - 48 + 'px';
 

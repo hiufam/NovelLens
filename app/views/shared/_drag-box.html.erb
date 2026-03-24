@@ -3,19 +3,29 @@
     <span>
       View
     </span>
+    <div class="drag-area">
+      <i class="bi bi-grip-vertical"></i>
+    </div>
     <div class="drag-header-tools">
+      <div class="change-view-dropdown">
+        <a class="btn btn-sm btn-custom-secondary dropdown-toggle" href="#" id="change-view-menu" data-bs-toggle="dropdown" aria-expanded="false">
+          <span>Change</span>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="change-view-menu">
+        </ul>
+      </div>
+
+      <!-- <li><a class="dropdown-item change-button">
+        </a></li> -->
       <button class="btn btn-custom tabs-button dropdown-toggle" type="button" id="tab-items" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-gear-fill" style="font-size: 1rem; display: flex; justify-content: center; align-items: center; color: white;"></i>
       </button>
-      <ul class="dropdown-menu" aria-labelledby="tab-items" style="z-index: 100;">
+      <ul class="dropdown-menu" aria-labelledby="tab-items" style="z-index: 100; text-align: center;">
         <li><a class="dropdown-item move-button">
           <i class="bi bi-arrows-move" style="font-size: 1rem; display: flex; justify-content: center; align-items: center; padding: 0.25rem;"></i>    
           <span>Toggle Drag</span>
         </a></li>
-        <li><a class="dropdown-item change-button">
-          <i class="bi bi-archive-fill" style="font-size: 1rem; display: flex; justify-content: center; align-items: center; padding: 0.25rem;"></i>    
-          <span>Change View</span>
-        </a></li>
+
         <li><a class="dropdown-item close-button">
           <i class="bi bi-x" style="font-size: 1.5rem; display: flex; justify-content: center; align-items: center;"></i>    
           <span>Remove</span>

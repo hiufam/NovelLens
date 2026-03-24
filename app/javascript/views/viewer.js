@@ -1,4 +1,5 @@
-import { home } from '../views/home';
+import { viewerMap } from '../constants/views';
+import { home, classViewerMap} from '../views/home';
 
 export class Viewer {
   moveEnabled = false;
@@ -14,22 +15,40 @@ export class Viewer {
     this.moveButton = container.querySelector('.move-button');    
     this.dragArea = this.container.querySelector('.drag-area');
     this.dragHeader = this.container.querySelector('.drag-header');
-
+    this.gripIcon = this.container.querySelector('.bi-grip-vertical');
+    
     this.closeButton?.addEventListener('click', this.#closeViewerEvent.bind(this));
     this.moveButton?.addEventListener('click', this.#toggleMoveEvent.bind(this));
     
-    const gripIcon = document.createElement('i');
-    gripIcon.classList.add('bi', 'bi-grip-vertical');
-    gripIcon.hidden = !this.moveEnabled;
+    this.gripIcon.hidden = !this.moveEnabled;
     
-    this.gripIcon = gripIcon;
-    this.dragHeader.insertBefore(gripIcon, this.dragArea);
-
     if (this.moveEnabled) {
       this.dragHeader.style['cursor'] = this.moveEnabled ? 'move' : 'auto';
     }
-  }
 
+    this.changeViewDropdown = this.container.querySelector('.change-view-dropdown');
+    this.changeViewMenu = this.changeViewDropdown.querySelector('.dropdown-menu');
+    this.changeViewDropdownInstance = bootstrap.Dropdown.getOrCreateInstance(this.changeViewDropdown);
+
+    Object.entries((viewerMap)).forEach(entry => {
+      const viewer = entry[1];
+      
+      const listItem = document.createElement('li');
+      const dropwDownItem = document.createElement('div');
+      
+      dropwDownItem.classList.add('viewer-dropdown-item', 'dropdown-item');
+      dropwDownItem.append(viewer.name);
+      dropwDownItem.addEventListener('click', (e) => {
+        e.preventDefault();        
+        this.#changeViewEvent(entry[0]);
+      });
+
+      listItem.append(dropwDownItem);
+      
+      this.changeViewMenu.append(listItem);
+    });
+  }
+  
   #closeViewerEvent() {    
     home.tree.remove(this.node.key);
     home.containerView.formatView();
@@ -41,6 +60,27 @@ export class Viewer {
     this.gripIcon.hidden = !this.moveEnabled;
     this.dragHeader.style['cursor'] = this.moveEnabled ? 'move' : 'auto';
     this.node.data.moveEnabled = this.moveEnabled;
+
+    home.containerView.saveView();
+  }
+
+  #changeViewEvent(viewerId) {    
+    const container = this.node.data.element.querySelector('.drag-box');        
+    const previousViewer = container.querySelector('.viewer');
+
+    const viewer = document.getElementById(viewerId);
+    const clonedViewer = viewer.cloneNode(true);
+    
+    container.append(clonedViewer);
+    
+    previousViewer.remove();
+    this.changeViewMenu.innerHTML = '';
+
+    this.node.data.viewerId = viewerId;
+    this.node.data.viewer = Reflect.construct(classViewerMap[viewerId].class, [container, this.node]);
+    
+    const dragTitle = this.container.querySelector('.drag-title');
+    dragTitle.textContent = viewerMap[viewerId].name;
 
     home.containerView.saveView();
   }

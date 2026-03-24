@@ -15,6 +15,16 @@ $secondary: #6bc384;
     $primary, 
     $primary,
     white,
+    );
+  }
+  
+.btn-custom-secondary {
+  @include button-variant(
+    $secondary, 
+    $secondary,
+    white,
+    $hover-color: white,
+    $active-color: white,
   );
 }
 
