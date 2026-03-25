@@ -25,10 +25,10 @@
       border-color: var(--bs-secondary);
       border-radius: 6px;
 
+      /* Enable object cover really lag it out */
       .image-display {
-        height: 100%;
         aspect-ratio: 1;
-        object-fit: cover;
+        
       }
     }
   }
