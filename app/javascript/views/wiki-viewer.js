@@ -25,6 +25,7 @@ export class WikiViewer extends Viewer {
    *     sroffset: number,
    *     continue: string
    *   },
+   *   url: string,
    *   query: {
    *     searchinfo: {
    *       totalhits: number,
@@ -51,7 +52,34 @@ export class WikiViewer extends Viewer {
 
     const searches = data?.query?.search || [];
     searches.forEach((search) => {
+      
       const searchContainer = document.createElement('div');
+      searchContainer.classList.add('search-container');
+
+      const searchBadge = document.createElement('span');
+      searchBadge.classList.add('badge', 'bg-secondary', 'search-badge');
+
+      const searchLink = document.createElement('a');      
+      searchLink.classList.add('search-link');
+      searchLink.addEventListener('click', () => {
+        const url = (new URL(search.title, data.url)).href;
+        window.open(url, '_blank');
+      })
+
+      searchBadge.append(searchLink);
+
+      const searchTitle = document.createElement('span');
+      searchTitle.textContent = search.title;
+
+      searchLink.append(searchTitle);
+
+      const linkIcon = document.createElement('i');
+      linkIcon.classList.add('bi', 'bi-box-arrow-up-right');
+
+      searchLink.append(linkIcon);
+
+      searchContainer.append(searchBadge);
+
       const searchSnippet = document.createElement('span');
       
       searchSnippet.innerHTML = search.snippet

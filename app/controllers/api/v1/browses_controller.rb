@@ -3,6 +3,7 @@ class Api::V1::BrowsesController < ApplicationController
     res = wikipedia_search(params[:query].strip);
     
     data = JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
+    wiki_creds =  Rails.application.credentials.wiki
 
     result = { 
       code: res.code,
@@ -10,6 +11,7 @@ class Api::V1::BrowsesController < ApplicationController
     }
 
     result[:data] = data if !data.nil?
+    result[:data][:url] = wiki_creds[:api_url] + "/wiki/"
 
     render json: result
   end

@@ -7,5 +7,17 @@
     flex-grow: 1;
     overflow: auto;
     margin-bottom: 3rem;
+  
+    .search-container {
+      gap: 12px;
+      padding-bottom: 2px;
+
+      .search-link {
+        cursor: pointer;
+        display: inline-flex;
+        color: white;
+        gap: 4px;
+      }
+    }
   }
 }
