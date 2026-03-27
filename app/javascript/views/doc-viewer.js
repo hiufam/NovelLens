@@ -2,11 +2,44 @@ import { convertDocToHtml } from '../apis/conversion';
 import { home } from '../views/home';
 import { Viewer } from '../views/viewer';
 
-import * as zip from "@zip.js/zip.js";
+import * as zip from '@zip.js/zip.js';
+import * as pdfjsLib from 'pdfjs-dist';
+import * as pdfWorker  from 'pdfjs-dist/build/pdf.worker.mjs';
+
+function fileToBase64URL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+}
+
+// https://stackoverflow.com/questions/65740268/create-react-app-how-to-copy-pdf-worker-js-file-from-pdfjs-dist-build-to-your
+const worker = new URL(
+  pdfWorker.WorkerMessageHandler,
+  import.meta.url
+).toString();
+
+// Access public folder
+const wasmUrl = new URL(
+  'pdfjs-dist/wasm/',
+  window.location.origin
+).toString();
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = worker
 
 export class DocViewer extends Viewer {
   #highlightTimeOutFuncId = undefined;
+  #files;
+  #images;
 
+  #pdfDoc;
+  #scale = 1.5;
+  #pageNum = 1;
+
+  
+  
   constructor(container, node) {
     super(container, node);    
     this.init(container);
@@ -17,15 +50,59 @@ export class DocViewer extends Viewer {
     this.docPicker = this.container.querySelector('.doc-picker');
     this.docViewerBody = this.container.querySelector('.doc-viewer-body');
 
+    this.convertButton = this.container.querySelector('.convert-button');
+    this.viewButton = this.container.querySelector('.view-button');    
+
     this.docPicker.onchange = (e) => this.#handleDocPickerChange(e);
+    this.convertButton.addEventListener('click', this.#convertFile.bind(this));
+    this.viewButton.addEventListener('click', this.#viewFile.bind(this));
+  
+    this.canvas = this.container.querySelector('.pdf-canvas');
+    this.textLayerContainer = this.container.querySelector('.textLayer');
+
+    document.getElementById("prev").onclick = () => {
+      if (this.#pageNum <= 1) return;
+      this.#pageNum--;
+      this.#renderPage(this.#pageNum);
+    };
+
+    document.getElementById("next").onclick = () => {
+      if (this.#pageNum >= this.#pdfDoc.numPages) return;
+      this.#pageNum++;
+      this.#renderPage(this.#pageNum);
+    };
+
+    document.getElementById("zoom-in").onclick = () => {
+      this.#scale += 0.2;
+      this.#renderPage(this.#pageNum);
+    };
+
+    document.getElementById("zoom-out").onclick = () => {
+      this.#scale -= 0.2;
+      this.#renderPage(this.#pageNum);
+    };
   }
 
-  async #handleDocPickerChange(e) {    
-    const files = e.target.files;  
-    const images = [];
-  
+  /**
+   * https://mozilla.github.io/pdf.js/examples/
+   */
+  async #viewFile() {
+    const fileUrl = await fileToBase64URL(this.#files[0]);    
+    const loadingTask = pdfjsLib.getDocument({
+      url: fileUrl,
+      wasmUrl,
+    })
+
+    loadingTask.promise.then(async (pdf) => {
+      this.#pdfDoc = pdf;
+      this.#renderPage(this.#pageNum);
+    });
+
+  }
+
+  async #convertFile() {
     const formData = new FormData();
-    formData.append("file", files[0]);
+    formData.append('file', this.#files[0]);
     
     const data = await convertDocToHtml(formData);
 
@@ -48,11 +125,11 @@ export class DocViewer extends Viewer {
   
         if (entries.length) {
           const blobs = await Promise.all(entries.map((entry, index) => {          
-            const imageId = entry.filename.split("/")[1].split(".")[0] // Ex: "media/image1.jpeg"
+            const imageId = entry.filename.split('/')[1].split('.')[0] // Ex: 'media/image1.jpeg'
             
             return entry.getData(new zip.BlobWriter() , {
               onend: () => {              
-                images.push({
+                this.#images.push({
                   id: imageId,
                   entryIndex: index,
                   name: entry.filename,
@@ -61,7 +138,7 @@ export class DocViewer extends Viewer {
             });
           }));
   
-          images.forEach((image) => {
+          this.#images.forEach((image) => {
             const blob = blobs[image.entryIndex];
             const url = URL.createObjectURL(blob);
             image.url = url;
@@ -81,7 +158,7 @@ export class DocViewer extends Viewer {
     this.docViewerBody.innerHTML = htmlDoc.getElementsByTagName('body')[0].innerHTML;  
     
     // Update doc images with new sources
-    images.forEach((image) => {      
+    this.#images.forEach((image) => {      
       const imageElement = this.docViewerBody.querySelector(`#${image.id}`);
       imageElement.src = image.url;
     })    
@@ -98,6 +175,11 @@ export class DocViewer extends Viewer {
     this.docViewerBody.addEventListener('mouseleave', () => {      
       document.removeEventListener('selectionchange', selectEvent);
     });
+  }
+
+  async #handleDocPickerChange(e) {    
+    const files = e.target.files;  
+    this.#files = files;
   }
 
   #hightlightTextEvent() {
@@ -119,5 +201,54 @@ export class DocViewer extends Viewer {
     } else {
       console.log('No text selected or selection cleared.');
     }
+  }
+
+  /**
+   * 
+   * @param {pdfjsLib.PDFPageProxy} page 
+   */
+  async #renderPage(number) {    
+    const page = await this.#pdfDoc.getPage(number);
+    // const scale = this.#getAutoScale(page);
+    const scale = this.#scale
+
+    const viewport = page.getViewport({ scale: scale });
+
+    // Canvas render
+    this.canvas.height = viewport.height;
+    this.canvas.width = viewport.width;
+
+    page.render({
+      canvasContext: this.canvas.getContext('2d'),
+      viewport: viewport,
+    });
+
+
+    // https://github.com/mozilla/pdf.js/issues/18206
+    const textContent = await page.getTextContent();
+
+    this.textLayerContainer.innerHTML = "";
+    this.textLayerContainer.style.setProperty('--scale-factor', scale.toString());
+    this.textLayerContainer.style.setProperty("--text-scale-factor", scale.toString()); // Stupid ass variable (Must manually set)
+
+    const textLayer = new pdfjsLib.TextLayer({
+      textContentSource: textContent,
+      container: this.textLayerContainer,
+      viewport: viewport,      
+    });
+
+    this.textLayerContainer.style.height = `${this.canvas.height}px`;
+    this.textLayerContainer.style.width = `${this.canvas.width}px`;
+
+    await textLayer.render();
+
+    // document.getElementById("page-info").textContent = `Page ${number} / ${this.#pdfDoc.numPages}`;
+  }
+
+  #getAutoScale(page) {
+    const containerWidth = this.docViewerBody.clientWidth;  
+
+    const viewport = page.getViewport({ scale: 1 });
+    return containerWidth / viewport.width;
   }
 }

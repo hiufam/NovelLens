@@ -1,9 +1,25 @@
 <div id="doc-viewer" class="viewer doc-viewer">
-  <input
-    type="file"
-    class="doc-picker"
-    accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
-  />
+  <div style="display: flex; flex-wrap: nowrap; gap: 2px;">
+    <input 
+      class="form-control doc-picker" 
+      type="file" 
+      id="docFile"
+      accept=".doc,.docx,.xml,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf" 
+    >
+    <button type="button" class="btn btn-custom convert-button">Convert</button>
+    <button type="button" class="btn btn-custom view-button">View</button>
+
+    <button id="prev">Prev</button>
+    <span id="page-info"></span>
+    <button id="next">Next</button>
+    <button id="zoom-in">+</button>
+    <button id="zoom-out">-</button>
+
+  </div>
   <div class="doc-viewer-body">
+    <div class="pdf-viewer">
+      <canvas class="pdf-canvas"></canvas>
+      <div class="textLayer" style="--text-scale-factor: 1.5;"></div>
+    </div>
   </div>
 </div>

@@ -1,4 +1,5 @@
 .doc-viewer {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -7,5 +8,19 @@
     flex-grow: 1;
     overflow: auto;
     margin-bottom: 3rem;
+    
+    .pdf-viewer {
+      position: relative;
+      /* display: flex;
+      align-items: center;
+      justify-content: center; */
+    }
   }
+}
+
+.textLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: auto;
 }

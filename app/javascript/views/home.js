@@ -1,3 +1,5 @@
+// import * as bootstrap from "bootstrap"; // if I add this js builds will disappear 
+
 import { ContainerView } from '../modules/container-view';
 
 import { DocViewer } from '../views/doc-viewer';

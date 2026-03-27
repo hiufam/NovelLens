@@ -8,6 +8,7 @@ $secondary: #6bc384;
 
 @import "bootstrap/scss/bootstrap";
 @import "bootstrap-icons/font/bootstrap-icons";
+@import "pdfjs-dist/web/pdf_viewer";
 
 // Button mixin: https://getbootstrap.com/docs/5.0/components/buttons/#mixins
 .btn-custom {
@@ -15,8 +16,8 @@ $secondary: #6bc384;
     $primary, 
     $primary,
     white,
-    );
-  }
+  );
+}
   
 .btn-custom-secondary {
   @include button-variant(
