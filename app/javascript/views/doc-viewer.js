@@ -52,30 +52,30 @@ export class DocViewer extends Viewer {
     this.viewButton = this.container.querySelector('.view-button');    
 
     this.docPicker.onchange = (e) => this.#handleDocPickerChange(e);
-    this.convertButton.addEventListener('click', () => this.#convertDocxToPDF(this.#file));
+    // this.convertButton.addEventListener('click', () => this.#convertDocxToPDF(this.#file));
     this.viewButton.addEventListener('click', () => this.#viewFile.bind(this)(this.#file));
   
     this.canvas = this.container.querySelector('.pdf-canvas');
     this.textLayerContainer = this.container.querySelector('.textLayer');
 
-    document.getElementById("prev").onclick = () => {
+    this.container.querySelector('.prev').onclick = () => {
       if (this.#pageNum <= 1) return;
       this.#pageNum--;
       this.#renderPage(this.#pageNum);
     };
 
-    document.getElementById("next").onclick = () => {
+    this.container.querySelector('.next').onclick = () => {
       if (this.#pageNum >= this.#pdfDoc.numPages) return;
       this.#pageNum++;
       this.#renderPage(this.#pageNum);
     };
 
-    document.getElementById("zoom-in").onclick = () => {
+    this.container.querySelector('.zoom-in').onclick = () => {
       this.#scale += 0.2;
       this.#renderPage(this.#pageNum);
     };
 
-    document.getElementById("zoom-out").onclick = () => {
+    this.container.querySelector('.zoom-out').onclick = () => {
       this.#scale -= 0.2;
       this.#renderPage(this.#pageNum);
     };
@@ -85,7 +85,15 @@ export class DocViewer extends Viewer {
    * https://mozilla.github.io/pdf.js/examples/
    */
   async #viewFile(file) {
-    const fileUrl = await fileToBase64URL(file);    
+    if (!file) return;    
+    let pdfFile = file;
+    const ext = file.name.split('.').pop();
+    
+    if (ext === 'docx') {
+      pdfFile = await this.#convertDocxToPDF(file);
+    }
+
+    const fileUrl = await fileToBase64URL(pdfFile);    
     const loadingTask = pdfjsLib.getDocument({
       url: fileUrl,
       wasmUrl,
@@ -112,7 +120,7 @@ export class DocViewer extends Viewer {
       type: 'application/pdf'
     })
 
-    this.#file = blob;
+    return blob
   }
 
   async #convertDocxToHTML(file) {
@@ -242,9 +250,9 @@ export class DocViewer extends Viewer {
     // https://github.com/mozilla/pdf.js/issues/18206
     const textContent = await page.getTextContent();
 
-    this.textLayerContainer.innerHTML = "";
+    this.textLayerContainer.innerHTML = '';
     this.textLayerContainer.style.setProperty('--scale-factor', scale.toString());
-    this.textLayerContainer.style.setProperty("--text-scale-factor", scale.toString()); // Stupid ass variable (Must manually set)
+    this.textLayerContainer.style.setProperty('--text-scale-factor', scale.toString()); // Stupid ass variable (Must manually set)
 
     const textLayer = new pdfjsLib.TextLayer({
       textContentSource: textContent,
@@ -257,7 +265,7 @@ export class DocViewer extends Viewer {
 
     await textLayer.render();
 
-    // document.getElementById("page-info").textContent = `Page ${number} / ${this.#pdfDoc.numPages}`;
+    // document.getElementById('page-info').textContent = `Page ${number} / ${this.#pdfDoc.numPages}`;
   }
 
   #getAutoScale(page) {
