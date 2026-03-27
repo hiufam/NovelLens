@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       get "wiki", to: "browses#search_wiki"
 
       post "docx_to_html", to: "conversions#docx_to_html"
+      post "docx_to_pdf", to: "conversions#docx_to_pdf"
 
       resources :logger 
     end

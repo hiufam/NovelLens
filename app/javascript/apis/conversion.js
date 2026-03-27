@@ -17,3 +17,23 @@ export async function convertDocToHtml(formData) {
     console.log('Error: ' + error);
   }
 }
+
+/**
+ * 
+ * @param {*} formData 
+ * @returns 
+ */
+export async function convertDocToPdf(formData) {
+  try {    
+    const response = await fetch("/api/v1/docx_to_pdf", {
+      method: "POST",
+      body: formData
+    });
+
+    if (response.ok) {
+      return response.json();
+    }
+  } catch (error) {
+    console.log('Error: ' + error);
+  }
+}

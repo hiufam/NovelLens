@@ -3,13 +3,37 @@ class Api::V1::ConversionsController < ApplicationController
 
   require "shellwords"
 
+  def docx_to_pdf
+    return render json: { error: "No file uploaded" }, status: :bad_request unless params[:file]
+
+    file = params[:file]
+
+    unless valid_file?(file)
+      return render json: { error: "Invalid file type" }, status: :unprocessable_entity
+    end
+
+    input_path = save_temp_file(file, ".docx")
+    output_path = input_path.sub(/\.docx$/, ".pdf")
+
+    conversion = "#{Shellwords.escape(input_path)} -f docx -t pdf -o #{Shellwords.escape(output_path)}"
+    pdf_engine = "--pdf-engine=xelatex" # use xelatex to handle special UNICODE
+
+    system(["pandoc", conversion, pdf_engine].join(" "))
+
+    pdf = File.exist?(output_path) ? File.binread(output_path) : nil
+
+    cleanup_files(input_path, output_path)
+
+    render json: { pdf: Base64.encode64(pdf) }
+  end
+
   # Converting doc to html, storing temp file of docx and media in temp folder before reading and return in response
   def docx_to_html
     return render json: { error: "No file uploaded" }, status: :bad_request unless params[:file]
 
     file = params[:file]
 
-    unless valid_docx?(file)
+    unless valid_file?(file)
       return render json: { error: "Invalid file type" }, status: :unprocessable_entity
     end
 
@@ -34,8 +58,11 @@ class Api::V1::ConversionsController < ApplicationController
 
   private
 
-  def valid_docx?(file)
-    file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  def valid_file?(file)
+    allowed_types = [
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ]
+    allowed_types.include?(file.content_type)
   end
 
   def save_temp_file(file, ext)

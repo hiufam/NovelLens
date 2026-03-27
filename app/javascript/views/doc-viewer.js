@@ -1,4 +1,4 @@
-import { convertDocToHtml } from '../apis/conversion';
+import { convertDocToHtml, convertDocToPdf } from '../apis/conversion';
 import { home } from '../views/home';
 import { Viewer } from '../views/viewer';
 
@@ -31,14 +31,12 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = worker
 
 export class DocViewer extends Viewer {
   #highlightTimeOutFuncId = undefined;
-  #files;
+  #file;
   #images;
 
   #pdfDoc;
   #scale = 1.5;
   #pageNum = 1;
-
-  
   
   constructor(container, node) {
     super(container, node);    
@@ -54,8 +52,8 @@ export class DocViewer extends Viewer {
     this.viewButton = this.container.querySelector('.view-button');    
 
     this.docPicker.onchange = (e) => this.#handleDocPickerChange(e);
-    this.convertButton.addEventListener('click', this.#convertFile.bind(this));
-    this.viewButton.addEventListener('click', this.#viewFile.bind(this));
+    this.convertButton.addEventListener('click', () => this.#convertDocxToPDF(this.#file));
+    this.viewButton.addEventListener('click', () => this.#viewFile.bind(this)(this.#file));
   
     this.canvas = this.container.querySelector('.pdf-canvas');
     this.textLayerContainer = this.container.querySelector('.textLayer');
@@ -86,8 +84,8 @@ export class DocViewer extends Viewer {
   /**
    * https://mozilla.github.io/pdf.js/examples/
    */
-  async #viewFile() {
-    const fileUrl = await fileToBase64URL(this.#files[0]);    
+  async #viewFile(file) {
+    const fileUrl = await fileToBase64URL(file);    
     const loadingTask = pdfjsLib.getDocument({
       url: fileUrl,
       wasmUrl,
@@ -100,9 +98,26 @@ export class DocViewer extends Viewer {
 
   }
 
-  async #convertFile() {
+  async #convertDocxToPDF(file) {
     const formData = new FormData();
-    formData.append('file', this.#files[0]);
+    formData.append('file', file);
+
+    const data = await convertDocToPdf(formData);
+    const base64pdf = data.pdf;
+
+    var binary = atob(base64pdf)
+    var array = new Uint8Array(binary.length)
+    for( var i = 0; i < binary.length; i++ ) { array[i] = binary.charCodeAt(i) }
+    const blob = new Blob([array], {
+      type: 'application/pdf'
+    })
+
+    this.#file = blob;
+  }
+
+  async #convertDocxToHTML(file) {
+    const formData = new FormData();
+    formData.append('file', file);
     
     const data = await convertDocToHtml(formData);
 
@@ -179,7 +194,7 @@ export class DocViewer extends Viewer {
 
   async #handleDocPickerChange(e) {    
     const files = e.target.files;  
-    this.#files = files;
+    this.#file = files[0];
   }
 
   #hightlightTextEvent() {
