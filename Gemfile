@@ -51,6 +51,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # For docker env: [https://discuss.rubyonrails.org/t/env-variables-in-rails-7-x/83588/3]
+  gem 'dotenv'
 end
 
 group :development do
@@ -66,5 +69,5 @@ end
 
 gem "jsbundling-rails", "~> 1.3"
 
-# Installation guide: https://github.com/rails/cssbundling-rails
+# Guide: [https://github.com/rails/cssbundling-rails]
 gem "cssbundling-rails", "~> 1.4"

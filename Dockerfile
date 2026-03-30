@@ -1,3 +1,5 @@
+# Taken from: https://github.com/nickjj/docker-rails-example/blob/main/Dockerfile
+
 # syntax=docker/dockerfile:1
 # check=error=true
 
@@ -9,73 +11,86 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=3.4.7
-FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+FROM docker.io/library/ruby:$RUBY_VERSION-slim AS assets
 
-# Rails app lives here
-WORKDIR /rails
+WORKDIR /app
 
-# Install base packages
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips sqlite3 && \
-    ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+ARG APP_UID=1000
+ARG APP_GID=1000
 
-# Set production environment variables and enable jemalloc for reduced memory usage and latency.
-ENV RAILS_ENV="production" \
-    BUNDLE_DEPLOYMENT="1" \
-    BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
-    LD_PRELOAD="/usr/local/lib/libjemalloc.so"
+RUN bash -c "set -o pipefail && apt-get update \
+  && apt-get install -y --no-install-recommends build-essential curl git libpq-dev libyaml-dev \
+  && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key -o /etc/apt/keyrings/nodesource.asc \
+  && echo 'deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesource.com/node_24.x nodistro main' | tee /etc/apt/sources.list.d/nodesource.list \
+  && apt-get update && apt-get install -y --no-install-recommends nodejs \
+  && corepack enable \
+  && rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man \
+  && apt-get clean \
+  && groupadd -g \"${APP_GID}\" ruby \
+  && useradd --create-home --no-log-init -u \"${APP_UID}\" -g \"${APP_GID}\" ruby \
+  && mkdir /node_modules && chown ruby:ruby -R /node_modules /app"
 
-# Throw-away build stage to reduce size of final image
-FROM base AS build
+USER ruby
 
-# Install packages needed to build gems
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+COPY --chown=ruby:ruby Gemfile* ./
+RUN bundle install
 
-# Install application gems
-COPY Gemfile Gemfile.lock vendor ./
+COPY --chown=ruby:ruby package.json *yarn* ./
+RUN yarn install
 
-RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
-    # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
-    bundle exec bootsnap precompile -j 1 --gemfile
+ARG RAILS_ENV="production"
+ARG NODE_ENV="production"
+ENV RAILS_ENV="${RAILS_ENV}" \
+  NODE_ENV="${NODE_ENV}" \
+  PATH="${PATH}:/home/ruby/.local/bin:/node_modules/.bin" \
+  USER="ruby"
 
-# Copy application code
-COPY . .
+COPY --chown=ruby:ruby . .
 
-# Precompile bootsnap code for faster boot times.
-# -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
-RUN bundle exec bootsnap precompile -j 1 app/ lib/
+RUN if [ "${RAILS_ENV}" != "development" ]; then \
+  SECRET_KEY_BASE_DUMMY=1 rails assets:precompile; fi
 
-# Adjust binfiles to be executable on Linux
-RUN chmod +x bin/* && \
-    sed -i "s/\r$//g" bin/* && \
-    sed -i 's/ruby\.exe$/ruby/' bin/*
-
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
-
-
-
+CMD ["bash"]
 
 # Final stage for app image
-FROM base
+FROM docker.io/library/ruby:$RUBY_VERSION-slim AS app
 
-# Run and own only the runtime files as a non-root user for security
-RUN groupadd --system --gid 1000 rails && \
-    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
-USER 1000:1000
+WORKDIR /app
 
-# Copy built artifacts: gems, application
-COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
-COPY --chown=rails:rails --from=build /rails /rails
+ARG APP_UID=1000
+ARG APP_GID=1000
 
-# Entrypoint prepares the database.
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends curl libpq-dev dos2unix \
+  && rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man \
+  && apt-get clean \
+  && groupadd -g "${APP_GID}" ruby \
+  && useradd --create-home --no-log-init -u "${APP_UID}" -g "${APP_GID}" ruby \
+  && chown ruby:ruby -R /app
 
-# Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+# Fix line ending when executing bash command
+# Source: https://willi.am/blog/2016/08/11/docker-for-windows-dealing-with-windows-line-endings/
+COPY /bin/docker-entrypoint-web.sh /entrypoint.sh
+RUN dos2unix /entrypoint.sh
+RUN apt-get --purge remove -y dos2unix
+
+USER ruby
+
+COPY --chown=ruby:ruby bin/ ./bin
+RUN chmod 0755 bin/*
+
+ARG RAILS_ENV="production"
+ENV RAILS_ENV="${RAILS_ENV}" \
+  PATH="${PATH}:/home/ruby/.local/bin" \
+  USER="ruby"
+
+COPY --chown=ruby:ruby --from=assets /usr/local/bundle /usr/local/bundle
+COPY --chown=ruby:ruby --from=assets /app/public /public
+COPY --chown=ruby:ruby . .
+
+# ENTRYPOINT ["/app/bin/docker-entrypoint-web.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
+
+EXPOSE 8000
+
+CMD ["rails", "s"]
