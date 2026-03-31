@@ -53,6 +53,8 @@ RUN if [ "${RAILS_ENV}" != "development" ]; then \
 CMD ["bash"]
 
 # Final stage for app image
+# Clear all previous instructions 
+# Source: https://docs.docker.com/reference/dockerfile/#from
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS app
 
 WORKDIR /app
@@ -68,7 +70,7 @@ RUN apt-get update \
   && useradd --create-home --no-log-init -u "${APP_UID}" -g "${APP_GID}" ruby \
   && chown ruby:ruby -R /app
 
-# Fix line ending when executing bash command
+# Fix line ending when executing bash command and remove from build once done
 # Source: https://willi.am/blog/2016/08/11/docker-for-windows-dealing-with-windows-line-endings/
 COPY /bin/docker-entrypoint-web.sh /entrypoint.sh
 RUN dos2unix /entrypoint.sh
@@ -84,6 +86,7 @@ ENV RAILS_ENV="${RAILS_ENV}" \
   PATH="${PATH}:/home/ruby/.local/bin" \
   USER="ruby"
 
+# Copy from "assets" build stage
 COPY --chown=ruby:ruby --from=assets /usr/local/bundle /usr/local/bundle
 COPY --chown=ruby:ruby --from=assets /app/public /public
 COPY --chown=ruby:ruby . .

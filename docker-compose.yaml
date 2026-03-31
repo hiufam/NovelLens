@@ -1,6 +1,6 @@
 x-app: &default-app
   build:
-    context: "."
+    context: "." # Current directory as build context
     target: "app"
     args:
       - "APP_UID=${UID:-1000}"
