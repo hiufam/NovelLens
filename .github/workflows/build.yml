@@ -28,4 +28,4 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: ${{ vars.DOCKER_USERNAME }}/${{ OWNER_LC }}:latest
+          tags: ${{ vars.DOCKER_USERNAME }}/${{ env.OWNER_LC }}:latest
