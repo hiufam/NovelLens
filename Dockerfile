@@ -62,8 +62,10 @@ WORKDIR /app
 ARG APP_UID=1000
 ARG APP_GID=1000
 
+# Install pandoc and textlive without "--no-install-recommends" to ensure needed packages are installed
 RUN apt-get update \
   && apt-get install -y --no-install-recommends curl libpq-dev dos2unix \
+  && apt-get install -y pandoc texlive-xetex \
   && rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man \
   && apt-get clean \
   && groupadd -g "${APP_GID}" ruby \
