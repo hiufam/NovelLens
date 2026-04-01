@@ -75,6 +75,8 @@ RUN apt-get update \
 # Fix line ending when executing bash command and remove from build once done
 # Source: https://willi.am/blog/2016/08/11/docker-for-windows-dealing-with-windows-line-endings/
 COPY /bin/docker-entrypoint-web.sh /entrypoint.sh
+# Fromm LLM: add this to fix "init: exec: "/entrypoint.sh": permission denied"
+RUN chmod +x /entrypoint.sh
 RUN dos2unix /entrypoint.sh
 RUN apt-get --purge remove -y dos2unix
 
