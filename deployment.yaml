@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-novel-lens
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: novel-lens
+  template:
+    metadata:
+      labels:
+        service: novel-lens
+    spec:
+      containers:
+        - name: novel-lens-container
+          image: hiufamd/novellens
+          imagePullPolicy: Always
+          env: 
+            - name: RAILS_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rails-secrets
+                  key: rails_master_key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docker-novel-lens
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    service: novel-lens
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30001

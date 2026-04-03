@@ -35,8 +35,6 @@ USER ruby
 COPY --chown=ruby:ruby Gemfile* ./
 RUN bundle install
 
-COPY --chown=ruby:ruby package.json *yarn* ./
-RUN yarn install
 
 ARG RAILS_ENV="production"
 ARG NODE_ENV="production"
@@ -49,6 +47,10 @@ COPY --chown=ruby:ruby . .
 
 RUN if [ "${RAILS_ENV}" != "development" ]; then \
   SECRET_KEY_BASE_DUMMY=1 rails assets:precompile; fi
+
+COPY --chown=ruby:ruby package.json *yarn* ./
+RUN yarn install
+RUN yarn build && yarn build:css
 
 CMD ["bash"]
 
