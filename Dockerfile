@@ -47,6 +47,8 @@ ENV RAILS_ENV="${RAILS_ENV}" \
 
 COPY --chown=ruby:ruby . .
 
+RUN yarn build && yarn build:css
+
 RUN if [ "${RAILS_ENV}" != "development" ]; then \
   SECRET_KEY_BASE_DUMMY=1 rails assets:precompile; fi
 
@@ -94,6 +96,7 @@ ENV RAILS_ENV="${RAILS_ENV}" \
 COPY --chown=ruby:ruby --from=assets /usr/local/bundle /usr/local/bundle
 COPY --chown=ruby:ruby --from=assets /app/public /public
 COPY --chown=ruby:ruby . .
+COPY --chown=ruby:ruby --from=assets /app/app/assets/builds /app/app/assets/builds
 
 # ENTRYPOINT ["/app/bin/docker-entrypoint-web.sh"]
 ENTRYPOINT ["/entrypoint.sh"]
