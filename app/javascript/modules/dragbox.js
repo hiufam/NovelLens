@@ -54,7 +54,8 @@ export function addDragBoxBehavior(node, area, containerView, options = {}) {
         document.onmousemove = onDragging;
   
         document.ontouchend = onDragEnd;
-        document.addEventListener('touchmove', onDragging.bind(this), { passive: false });
+        document.ontouchmove = onDragging;
+        // document.addEventListener('touchmove', onDragging.bind(this), { passive: false });
       }
     }
     
@@ -105,7 +106,7 @@ export function addDragBoxBehavior(node, area, containerView, options = {}) {
       document.onmousemove = null;
       
       document.ontouchend = null;
-      document.ontouchstart = null;
+      document.ontouchmove = null;      
     }
   }
   

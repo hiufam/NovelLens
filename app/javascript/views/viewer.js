@@ -20,7 +20,7 @@ export class Viewer {
     
     this.closeButton?.addEventListener('click', this.#closeViewerEvent.bind(this));
     this.moveButton?.addEventListener('click', this.#toggleMoveEvent.bind(this));
-    
+
     this.gripIcon.hidden = !this.moveEnabled;
     
     if (this.moveEnabled) {

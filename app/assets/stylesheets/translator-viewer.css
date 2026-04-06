@@ -5,7 +5,7 @@
 
   .translator-viewer-body {
     flex-grow: 1;
-    overflow: scroll;
+    overflow: auto;
     margin-bottom: 3rem;
   }
 }
