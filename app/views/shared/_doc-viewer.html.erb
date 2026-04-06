@@ -1,33 +1,46 @@
 <div id="doc-viewer" class="viewer doc-viewer">
   <div style="display: flex; flex-wrap: nowrap; gap: 2px;">
-    <input 
-      class="form-control doc-picker" 
-      type="file" 
-      id="docFile"
-      accept=".doc,.docx,.xml,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf" 
-    >
+    <div class="input-group">
+      <input 
+        class="form-control doc-picker" 
+        type="file" 
+        id="docFile"
+        accept=".doc,.docx,.xml,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf" 
+      >
+      <button type="button" class="btn btn-custom view-button">View</button>
+    </div>
+    
     <!-- <button type="button" class="btn btn-custom convert-button">Convert</button> -->
-    <button type="button" class="btn btn-custom view-button">View</button>
-
-    <span class="page-info"></span>
-    <button type="button" class="btn btn-custom prev">
-      <i class="bi bi-caret-left-fill"></i>
-    </button>
-    <button type="button" class="btn btn-custom next">
-      <i class="bi bi-caret-right-fill"></i>
-    </button>
-    <button type="button" class="btn btn-custom zoom-in">
-      <i class="bi bi-zoom-in"></i>
-    </button>
-    <button type="button" class="btn btn-custom zoom-out">
-      <i class="bi bi-zoom-out"></i>
-    </button>
-
+    <div class="page-info input-group" hidden>
+      <input type="text" class="form-control page-info-input" placeholder="page" aria-label="page" aria-describedby="basic-addon2">
+      <span class="input-group-text" id="basic-addon2" style="width: fit-content;">/<span class="total-pages">999</span></span>
+    </div>
   </div>
+
   <div class="doc-viewer-body">
     <div class="pdf-viewer">
       <canvas class="pdf-canvas"></canvas>
       <div class="textLayer" style="--text-scale-factor: 1.5;"></div>
+    </div>
+    <div class="doc-viewer-tools" hidden>
+      <button type="button" class="btn btn-custom prev">
+        <i class="bi bi-caret-left-fill"></i>
+      </button>
+      <button type="button" class="btn btn-custom next">
+        <i class="bi bi-caret-right-fill"></i>
+      </button>
+      <button type="button" class="btn btn-custom zoom-in">
+        <i class="bi bi-zoom-in"></i>
+      </button>
+      <button type="button" class="btn btn-custom zoom-out">
+        <i class="bi bi-zoom-out"></i>
+      </button>
+      <button type="button" class="btn btn-custom fit-width">
+        <i class="bi bi-arrows"></i>
+      </button>
+      <button type="button" class="btn btn-custom fit-height">
+        <i class="bi bi-arrows-vertical"></i>
+      </button>
     </div>
   </div>
 </div>

@@ -7,14 +7,28 @@
   .doc-viewer-body {
     flex-grow: 1;
     overflow: auto;
-    margin-bottom: 3rem;
+    align-items: center;
+    justify-items: center;
+    z-index: 1;
     
     .pdf-viewer {
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding-bottom: 84px;
     }
+  }
+
+  .doc-viewer-tools {
+    position: absolute;
+    gap: 2px;
+    width: 100%;
+    z-index: 10;
+    
+    bottom: 48px;
+    left: calc(50% - 136px);
+  }
+
+  .page-info {
+    width: fit-content;
   }
 }
 

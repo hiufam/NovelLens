@@ -35,8 +35,10 @@ export class DocViewer extends Viewer {
   #images;
 
   #pdfDoc;
-  #scale = 1.5;
+  #scale = 1;
+  #autoScale = true;
   #pageNum = 1;
+  #totalPages = 0;
   
   constructor(container, node) {
     super(container, node);    
@@ -47,38 +49,79 @@ export class DocViewer extends Viewer {
     this.#highlightTimeOutFuncId = undefined
     this.docPicker = this.container.querySelector('.doc-picker');
     this.docViewerBody = this.container.querySelector('.doc-viewer-body');
+    this.docTools = this.container.querySelector('.doc-viewer-tools');
+    this.pageInfo = this.container.querySelector('.page-info');
+    this.pageInfoInput = this.pageInfo.querySelector('.page-info-input');
+    this.totalPages = this.pageInfo.querySelector('.total-pages');
 
     this.convertButton = this.container.querySelector('.convert-button');
-    this.viewButton = this.container.querySelector('.view-button');    
-
+    this.viewButton = this.container.querySelector('.view-button');
+    this.widthFitButton = this.container.querySelector('.fit-width');
+    this.heightFitHeight = this.container.querySelector('.fit-height');
+    this.prevButton = this.container.querySelector('.prev');
+    this.nextButton = this.container.querySelector('.next');
+    this.zoomInButton = this.container.querySelector('.zoom-in');
+    this.zoomOutButton = this.container.querySelector('.zoom-out');
+    
     this.docPicker.onchange = (e) => this.#handleDocPickerChange(e);
-    // this.convertButton.addEventListener('click', () => this.#convertDocxToPDF(this.#file));
     this.viewButton.addEventListener('click', () => this.#viewFile.bind(this)(this.#file));
-  
+    
     this.canvas = this.container.querySelector('.pdf-canvas');
     this.textLayerContainer = this.container.querySelector('.textLayer');
-
-    this.container.querySelector('.prev').onclick = () => {
+    
+    this.prevButton.onclick = () => {
       if (this.#pageNum <= 1) return;
       this.#pageNum--;
       this.#renderPage(this.#pageNum);
     };
 
-    this.container.querySelector('.next').onclick = () => {
+    this.nextButton.onclick = () => {
       if (this.#pageNum >= this.#pdfDoc.numPages) return;
       this.#pageNum++;
       this.#renderPage(this.#pageNum);
     };
 
-    this.container.querySelector('.zoom-in').onclick = () => {
+    this.zoomInButton.onclick = () => {
+      if (this.#autoScale) {
+        this.#scale = Math.ceil(this.#scale / 0.2) * 0.2
+      }
+
       this.#scale += 0.2;
+      this.#autoScale = false;
       this.#renderPage(this.#pageNum);
     };
 
-    this.container.querySelector('.zoom-out').onclick = () => {
+    this.zoomOutButton.onclick = () => {
+      if (this.#autoScale) {
+        this.#scale = Math.ceil(this.#scale / 0.2) * 0.2
+      }
+
       this.#scale -= 0.2;
+      this.#autoScale = false;
       this.#renderPage(this.#pageNum);
     };
+
+    this.widthFitButton.onclick = () => {
+      this.#autoScale = true;
+      this.#scale = 1;
+      this.#renderPage(this.#pageNum);
+    }
+
+    this.heightFitHeight.onclick = () => {
+      this.#autoScale = true;
+      this.#scale = 1;
+      this.#renderPage(this.#pageNum, 'height');
+    }
+
+    this.pageInfoInput.addEventListener('change', (event) => {
+      const value = event.target.value;
+      const pageNum = parseInt(value);
+
+      if (pageNum >= 1 && pageNum <= this.#totalPages) {
+        this.#pageNum = pageNum;
+        this.#renderPage(pageNum);
+      }
+    });
   }
 
   /**
@@ -101,9 +144,16 @@ export class DocViewer extends Viewer {
 
     loadingTask.promise.then(async (pdf) => {
       this.#pdfDoc = pdf;
+      this.#totalPages = pdf.numPages;
+      this.totalPages.textContent = pdf.numPages;
+      this.#pageNum = 1;
+
+      this.pageInfo.hidden = false;
+      this.docTools.hidden = false;
+      this.pageInfoInput.value = 1;
+
       this.#renderPage(this.#pageNum);
     });
-
   }
 
   async #convertDocxToPDF(file) {
@@ -230,11 +280,20 @@ export class DocViewer extends Viewer {
    * 
    * @param {pdfjsLib.PDFPageProxy} page 
    */
-  async #renderPage(number) {    
+  async #renderPage(number, size) {    
     const page = await this.#pdfDoc.getPage(number);
-    // const scale = this.#getAutoScale(page);
-    const scale = this.#scale
 
+    let scale = this.#scale;
+    
+    if (this.#autoScale) {
+      scale = this.#getAutoScale(page, size);
+      this.#scale = scale;
+    }    
+
+    if (this.#pdfDoc.numPages) {
+      this.pageInfoInput.value = number;
+    }
+    
     const viewport = page.getViewport({ scale: scale });
 
     // Canvas render
@@ -268,10 +327,22 @@ export class DocViewer extends Viewer {
     // document.getElementById('page-info').textContent = `Page ${number} / ${this.#pdfDoc.numPages}`;
   }
 
-  #getAutoScale(page) {
-    const containerWidth = this.docViewerBody.clientWidth;  
-
+  #getAutoScale(page, size) {
+    let containerSize
+    if (size === 'height') {
+      containerSize = this.docViewerBody.clientHeight;
+    } else {
+      containerSize = this.docViewerBody.clientWidth;
+    }
     const viewport = page.getViewport({ scale: 1 });
-    return containerWidth / viewport.width;
+    
+    let scale;
+    if (size === 'height') {
+      scale = containerSize / viewport.height;
+    } else {
+      scale =  containerSize / viewport.width;
+    }
+
+    return scale;
   }
 }
