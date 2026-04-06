@@ -323,7 +323,8 @@ export class ContainerView {
     // Update styles    
     const draggingContainer = draggingNode.data.element;
     const overedContainer = overedNode.data.element;
-
+    const parentContainer = overedNode.data.parent.data.element;
+    
     draggingContainer.classList = overedContainer.classList;
 
     let sizeKey = 'width';
@@ -334,10 +335,10 @@ export class ContainerView {
 
     if (position && overedNode.data.parent.key !== draggingNode.data.parent.key) {      
       const originSize = overedContainer.getBoundingClientRect()[sizeKey]
-      const calculatedSize = originSize - resizerSize;
-      
-      const totalSize = parseFloat(overedContainer.style[sizeKey]) * calculatedSize /  originSize;
-      const size = totalSize / 2;
+      const calculatedSize = originSize - resizerSize - 4; // 4 = resizer margin
+      const parentSize = parentContainer.getBoundingClientRect()[sizeKey]
+
+      const size = (calculatedSize / 2) / parentSize * 100;
 
       // Remove previous size
       draggingContainer.style.removeProperty('width')
