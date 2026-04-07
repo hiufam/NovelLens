@@ -3,6 +3,7 @@ import { isOver, getHoveredSide } from '../helpers/elements';
 
 import { addDndBehavior } from '../modules/dnd';
 import { TreeNode } from '../modules/tree';
+import { ContainerView } from '../modules/container-view';
 
 import { home, classViewerMap } from '../views/home';
 
@@ -15,6 +16,7 @@ class Header {
 
   init() {
     this.saveViewButton = document.getElementById('save-view');
+    this.resetViewButton = document.getElementById('reset-view');
     this.toggleHeadersButton = document.getElementById('toggle-headers');
     this.viewersDropdown = document.getElementById('viewers-dropdown');
     this.viewersDropdownMenu = this.viewersDropdown.querySelector('.dropdown-menu');    
@@ -44,6 +46,15 @@ class Header {
     });
 
     this.toggleHeadersButton.addEventListener('click', this.#toggleHeaders.bind(this));
+    this.resetViewButton.addEventListener('click', this.#resetView.bind(this));
+  }
+
+  #resetView() {
+    if (window.confirm("Do you reset views to default? (This will also removes current contents)")) {
+      localStorage.removeItem('view_config');
+      home.clearView();
+      home.initializeView();
+    }  
   }
 
   #dropItem(event, viewerId) {

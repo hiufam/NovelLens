@@ -35,9 +35,19 @@ class Home {
   toggleHeaders = true;
   
   constructor() {
-    this.tree = ContainerView.getSavedView();    
-    this.containerView = new ContainerView(this.tree);    
-    
+    this.initializeView();
+  }
+
+  clearView() {
+    this.containerView.clearView();
+    this.tree = null;
+    this.containerView = null;
+  }
+
+  initializeView() {
+    this.tree = ContainerView.getSavedView();
+    this.containerView = new ContainerView(this.tree);
+
     this.containerView.buildView({
       onDragEnded: this.containerView.saveView.bind(this.containerView),
       onResizingEnded: this.containerView.saveView.bind(this.containerView)

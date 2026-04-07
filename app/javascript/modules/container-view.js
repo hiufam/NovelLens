@@ -267,6 +267,13 @@ export class ContainerView {
     return nodeADirection === nodeBDirection;
   }
 
+  clearView() {
+    this.tree.root.data.element.remove();
+    this.tree = undefined
+    this.resizers = [];
+    this.containers = [];
+  }
+
   getView() {
     const nodeKeys = new Map();
 
@@ -513,12 +520,12 @@ export class ContainerView {
   static getDefaultTree() {
     const rootNode = new TreeNode('root', { flexDirection: 'row', type: 'wrapper' });
 
-    const node0 = new TreeNode('0', { flexDirection: 'row', viewerId: 'doc-viewer' });
+    const node0 = new TreeNode('0', { flexDirection: 'row', viewerId: 'doc-viewer', moveEnabled: true});
     const node1 = new TreeNode('1', { flexDirection: 'column', type: 'wrapper' });
 
-    const node2 = new TreeNode('2', { flexDirection: 'row', viewerId: 'translator-viewer' });
-    const node3 = new TreeNode('3', { flexDirection: 'row', viewerId: 'images-viewer' });
-    const node4 = new TreeNode('4', { flexDirection: 'row', viewerId: 'wiki-viewer' });
+    const node2 = new TreeNode('2', { flexDirection: 'row', viewerId: 'translator-viewer', moveEnabled: true });
+    const node3 = new TreeNode('3', { flexDirection: 'row', viewerId: 'images-viewer', moveEnabled: true });
+    const node4 = new TreeNode('4', { flexDirection: 'row', viewerId: 'wiki-viewer', moveEnabled: true });
 
     const tree = new Tree(rootNode);
 
@@ -527,7 +534,7 @@ export class ContainerView {
   
     node1.insert(node2);
     node1.insert(node3);
-    // node1.insert(node4);
+    node1.insert(node4);
 
     return tree;
   }
