@@ -1,11 +1,13 @@
 export function addDragBoxBehavior(node, area, containerView, options = {}) {
   const { onEnded } = options;    
   const mainContainer = document.getElementById('main-container');
+  const viewerOverlay = document.getElementById('viewer-overlay');
+  const sharedViews = document.getElementById('shared-views');
 
   let hoveredElement = null;
   let hoveredSide = null;
   let pos1, pos2, pos3, pos4;
-  let areas;
+  let areas = document.getElementsByClassName('drag-box');
   let tree = containerView.tree;
 
   function addDragBehavior(element) {
@@ -77,7 +79,15 @@ export function addDragBoxBehavior(node, area, containerView, options = {}) {
       // set the element's new position:
       clonedHeader.style.top = (clonedHeader.offsetTop - pos2) + 'px';
       clonedHeader.style.left = (clonedHeader.offsetLeft - pos1) + 'px';
-    
+
+      displayDropHint(clientPos);
+    }
+
+    function displayDropHint(pos) {
+      const hoveredElement = isOver(Array.from(areas), pos);
+      if (hoveredElement?.parentElement) {
+        hoveredElement.append(viewerOverlay);
+      }
     }
     
     function onDragEnd(e) {
@@ -106,7 +116,10 @@ export function addDragBoxBehavior(node, area, containerView, options = {}) {
       document.onmousemove = null;
       
       document.ontouchend = null;
-      document.ontouchmove = null;      
+      document.ontouchmove = null;
+
+      /* Put the overlay back to shared views */
+      sharedViews.append(viewerOverlay);
     }
   }
   
