@@ -1,7 +1,8 @@
 <header>
   <div class="header-container">
-    <div class="header-tool">
+    <p class="h4 web-title">NovelLens</p>
 
+    <div class="header-tool">
       <div id="viewers-dropdown">
         <button 
           class="btn btn-custom dropdown-toggle" 
@@ -9,6 +10,7 @@
           data-bs-toggle="dropdown" 
           aria-expanded="false"
         >
+          <i class="bi bi-eye-fill"></i>
           Views
         </button>
         <ul class="dropdown-menu" aria-labelledby="viewers-menu">
@@ -16,6 +18,7 @@
       </div>
 
       <button id="reset-view" type="button" class="btn btn-custom">
+        <i class="bi bi-arrow-clockwise"></i>
         Reset Views
       </button>
 
@@ -30,6 +33,9 @@
       >
         <i class="bi bi-grip-horizontal" style="font-size: 1.5rem;"></i>
       </button>
+      <div class="avatar">
+        <i class="bi bi-person-fill" style="font-size: 24px; color: white;"></i>
+      </div>
     </div>
   </div>
 </header>
