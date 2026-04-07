@@ -10,21 +10,21 @@
     align-items: center;
     justify-items: center;
     z-index: 1;
+    margin-bottom: 84px;
     
     .pdf-viewer {
       position: relative;
-      padding-bottom: 84px;
     }
   }
 
   .doc-viewer-tools {
+    display: flex;
     position: absolute;
     gap: 2px;
     width: 100%;
     z-index: 10;
-    
+    justify-content: center;
     bottom: 48px;
-    left: calc(50% - 136px);
   }
 
   .page-info {
