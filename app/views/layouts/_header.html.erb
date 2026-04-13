@@ -2,40 +2,42 @@
   <div class="header-container">
     <p class="h4 web-title">NovelLens</p>
 
-    <div class="header-tool">
-      <div id="viewers-dropdown">
-        <button 
-          class="btn btn-custom dropdown-toggle" 
-          type="button" id="viewers-menu" 
-          data-bs-toggle="dropdown" 
-          aria-expanded="false"
-        >
-          <i class="bi bi-eye-fill"></i>
-          Views
+    <% if current_page?(root_path) %>
+      <div class="header-tool">
+        <div id="viewers-dropdown">
+          <button 
+            class="btn btn-custom dropdown-toggle" 
+            type="button" id="viewers-menu" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false"
+          >
+            <i class="bi bi-eye-fill"></i>
+            Views
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="viewers-menu">
+          </ul>
+        </div>
+
+        <button id="reset-view" type="button" class="btn btn-custom">
+          <i class="bi bi-arrow-clockwise"></i>
+          Reset Views
         </button>
-        <ul class="dropdown-menu" aria-labelledby="viewers-menu">
-        </ul>
-      </div>
 
-      <button id="reset-view" type="button" class="btn btn-custom">
-        <i class="bi bi-arrow-clockwise"></i>
-        Reset Views
-      </button>
-
-      <button 
-        hidden
-        id="toggle-headers"
-        class="btn btn-custom header-tool-button"
-        data-bs-toggle="tooltip" 
-        data-bs-placement="bottom"
-        data-bs-title="Toggle View Headers"
-        type="button"
-      >
-        <i class="bi bi-grip-horizontal" style="font-size: 1.5rem;"></i>
-      </button>
-      <div class="avatar">
-        <i class="bi bi-person-fill" style="font-size: 24px; color: white;"></i>
+        <button 
+          hidden
+          id="toggle-headers"
+          class="btn btn-custom header-tool-button"
+          data-bs-toggle="tooltip" 
+          data-bs-placement="bottom"
+          data-bs-title="Toggle View Headers"
+          type="button"
+        >
+          <i class="bi bi-grip-horizontal" style="font-size: 1.5rem;"></i>
+        </button>
+        <div class="avatar">
+          <i class="bi bi-person-fill" style="font-size: 24px; color: white;"></i>
+        </div>
       </div>
-    </div>
+    <% end  %>
   </div>
 </header>

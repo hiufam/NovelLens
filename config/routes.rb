@@ -12,17 +12,20 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
+  resource :session
+  resources :passwords, param: :token
+  resource :sign_up
+
   namespace :api do
     namespace :v1 do
       get "images", to: "dictionaries#get_images"
       get "definitions", to: "dictionaries#get_definitions"
-      
       get "wiki", to: "browses#search_wiki"
 
       post "docx_to_html", to: "conversions#docx_to_html"
       post "docx_to_pdf", to: "conversions#docx_to_pdf"
 
-      resources :logger 
+      resources :logger
     end
   end
 end

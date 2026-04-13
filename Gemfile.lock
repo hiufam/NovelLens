@@ -79,6 +79,7 @@ GEM
       public_suffix (>= 2.0.2, < 8.0)
     ast (2.4.3)
     base64 (0.3.0)
+    bcrypt (3.1.22)
     bcrypt_pbkdf (1.1.2)
     bigdecimal (4.0.1)
     bindex (0.8.1)
@@ -195,6 +196,8 @@ GEM
       racc
     pexels (0.5.0)
       requests (~> 1.0.2)
+    pg (1.6.3-x64-mingw-ucrt)
+    pg (1.6.3-x86_64-linux)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -316,8 +319,6 @@ GEM
       fugit (~> 1.11)
       railties (>= 7.1)
       thor (>= 1.3.1)
-    sqlite3 (2.9.0-x64-mingw-ucrt)
-    sqlite3 (2.9.0-x86_64-linux-gnu)
     sshkit (1.25.0)
       base64
       logger
@@ -364,6 +365,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  bcrypt (~> 3.1.7)
   bootsnap
   brakeman
   bundler-audit
@@ -376,6 +378,7 @@ DEPENDENCIES
   jsbundling-rails (~> 1.3)
   kamal
   pexels
+  pg (~> 1.1)
   propshaft
   puma (>= 5.0)
   rails (~> 8.1.1)
@@ -384,7 +387,6 @@ DEPENDENCIES
   solid_cable
   solid_cache
   solid_queue
-  sqlite3 (>= 2.1)
   stimulus-rails
   thruster
   turbo-rails

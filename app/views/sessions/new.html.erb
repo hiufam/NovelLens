@@ -1,0 +1,17 @@
+<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+
+<div class="sign-in-container">
+  <%= form_with url: session_path, class:"sign-in-form" do |form| %>
+    <div class="input-group">
+      <%= form.email_field :email_address, class:"form-control", required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %>
+    </div>
+    <div class="input-group">
+      <%= form.password_field :password, class:"form-control", required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
+    </div>
+    <%= form.submit "Sign in", class:"btn btn-primary submit-button" %>
+  <% end %>
+
+  <%= link_to "Sign up", sign_up_path %>
+  <%= link_to "Forgot password?", new_password_path %>
+</div>
