@@ -10,6 +10,32 @@ $secondary: #6bc384;
 @import "bootstrap-icons/font/bootstrap-icons";
 @import "pdfjs-dist/web/pdf_viewer";
 
+// Toast close button
+.close {
+  all: unset;
+  cursor: pointer;
+  float: right;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .5;
+  background-color: inherit;
+  box-shadow: none;
+  margin-left: auto
+}
+
+.toast-alert {
+  color: var( --bs-danger);
+  text-transform: capitalize;
+}
+
+.toast-notice {
+  color: var( --bs-success);
+  text-transform: capitalize;
+}
+
 // Button mixin: https://getbootstrap.com/docs/5.0/components/buttons/#mixins
 .btn-custom {
   @include button-variant(

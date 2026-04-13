@@ -22,10 +22,18 @@ export const classViewerMap = {
   },
 }
 
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
-})
+});
+
+var toastList = document.getElementsByClassName('toast');
+Array.from(toastList).forEach((toast) => {
+  let bsAlert = new bootstrap.Toast(toast);
+  setTimeout(function () {
+    bsAlert.show();
+  }, 100);
+});
 
 class Home {
   highlightedText;

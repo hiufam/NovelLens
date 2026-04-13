@@ -1,8 +1,6 @@
 <div class="update-password-container">
   <h1>Update your password</h1>
 
-  <%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-
   <%= form_with url: password_path(params[:token]), class:"update-password-form", method: :put do |form| %>
     <%= form.password_field :password, class: "form-control", required: true, autocomplete: "new-password", placeholder: "Enter new password", maxlength: 72 %><br>
     <%= form.password_field :password_confirmation, class: "form-control", required: true, autocomplete: "new-password", placeholder: "Repeat new password", maxlength: 72 %><br>
