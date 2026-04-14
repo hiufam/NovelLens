@@ -1,24 +1,22 @@
 default: &default
-  adapter: postgresql
-  encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  adapter: "postgresql"
+  encoding: "unicode"
+  database: "<%= ENV.fetch('POSTGRES_DB') { 'postgres' } %>"
+  username: "<%= ENV.fetch('POSTGRES_USER') { 'postgres' } %>"
+  password: "<%= ENV.fetch('POSTGRES_PASSWORD') { '123456' } %>"
+  host: "<%= ENV.fetch('POSTGRES_HOST') { 'localhost' } %>"
+  port: "<%= ENV.fetch('POSTGRES_PORT') { 5432 } %>"
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  max_connections: "<%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>"
 
 development:
   <<: *default
-  database: <%= ENV.fetch("POSTGRES_DB") { "postgres" } %>_development
-  username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "123456" } %>
-  host: <%= ENV.fetch("POSTGRES_HOST") { "localhost" } %>
-  port: <%= ENV.fetch("POSTGRES_PORT") { 5432 } %>
+  database: "<%= ENV.fetch('POSTGRES_DB') { 'postgres' } %>_development"
 
 test:
   <<: *default
-  database: <%= ENV.fetch("POSTGRES_DB") { "postgres" } %>_test
-  username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "123456" } %>
-  host: <%= ENV.fetch("POSTGRES_HOST") { "localhost" } %>
-  port: <%= ENV.fetch("POSTGRES_PORT") { 5432 } %>
+  database: "<%= ENV.fetch('POSTGRES_DB') { 'postgres' } %>_test"
 
 production:
   <<: *default
-  url: <%= ENV["DATABASE_URL"] %>
+  database: "<%= ENV.fetch('POSTGRES_DB') { 'postgres' } %>_production"
