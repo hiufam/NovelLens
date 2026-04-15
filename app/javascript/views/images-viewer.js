@@ -103,7 +103,7 @@ export class ImagesViewer extends Viewer {
   }
 
   #changeImageSizeEvent(e) {
-    const heightPercentage = `${e.target.value}%`;
+    const heightPercentage = `${e.target.value}px`;
     const imageContainers = this.container.querySelectorAll('.image-container');
 
     Array.from(imageContainers).forEach((imageContainers) => {
