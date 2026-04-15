@@ -17,6 +17,7 @@ export class Viewer {
     this.dragArea = this.container.querySelector('.drag-area');
     this.dragHeader = this.container.querySelector('.drag-header');
     this.gripIcon = this.container.querySelector('.bi-grip-vertical');
+    this.loading = this.container.querySelector('.viewer-spinner');
     
     this.closeButton?.addEventListener('click', this.#closeViewerEvent.bind(this));
     this.moveButton?.addEventListener('click', this.#toggleMoveEvent.bind(this));
@@ -48,6 +49,10 @@ export class Viewer {
       
       this.changeViewMenu.append(listItem);
     });
+  }
+
+  setLoading(bool) {
+    this.loading.hidden = !bool    
   }
 
   loadSavedData(data) {

@@ -129,32 +129,37 @@ export class DocViewer extends Viewer {
    */
   async #viewFile(file) {
     if (!file) return;
-
-    let pdfFile = file;
-    const ext = file.name.split('.').pop();
-    
-    if (ext === 'docx') {
-      pdfFile = await this.#convertDocxToPDF(file);
+    this.setLoading(true);
+    try {
+      let pdfFile = file;
+      const ext = file.name.split('.').pop();
+      
+      if (ext === 'docx') {
+        pdfFile = await this.#convertDocxToPDF(file);
+      }
+  
+      const fileUrl = await fileToBase64URL(pdfFile);    
+      const loadingTask = pdfjsLib.getDocument({
+        url: fileUrl,
+        wasmUrl,
+      })
+  
+      loadingTask.promise.then(async (pdf) => {
+        this.#pdfDoc = pdf;
+        this.#totalPages = pdf.numPages;
+        this.totalPages.textContent = pdf.numPages;
+        this.#pageNum = 1;
+  
+        this.pageInfo.hidden = false;
+        this.docTools.hidden = false;
+        this.pageInfoInput.value = 1;
+  
+        this.#renderPage(this.#pageNum);
+      });
+      this.setLoading(false);
+    } catch (error) {
+      this.setLoading(false);      
     }
-
-    const fileUrl = await fileToBase64URL(pdfFile);    
-    const loadingTask = pdfjsLib.getDocument({
-      url: fileUrl,
-      wasmUrl,
-    })
-
-    loadingTask.promise.then(async (pdf) => {
-      this.#pdfDoc = pdf;
-      this.#totalPages = pdf.numPages;
-      this.totalPages.textContent = pdf.numPages;
-      this.#pageNum = 1;
-
-      this.pageInfo.hidden = false;
-      this.docTools.hidden = false;
-      this.pageInfoInput.value = 1;
-
-      this.#renderPage(this.#pageNum);
-    });
   }
 
   async #convertDocxToPDF(file) {

@@ -1,5 +1,5 @@
 class Api::V1::ConversionsController < ApplicationController
-  protect_from_forgery with: :null_session # WARNING: disabling CSRF protection for file upload 
+  protect_from_forgery with: :null_session # WARNING: disabling CSRF protection for file upload
 
   require "shellwords"
 
@@ -18,7 +18,7 @@ class Api::V1::ConversionsController < ApplicationController
     conversion = "#{Shellwords.escape(input_path)} -f docx -t pdf -o #{Shellwords.escape(output_path)}"
     pdf_engine = "--pdf-engine=xelatex" # use xelatex to handle special UNICODE
 
-    system(["pandoc", conversion, pdf_engine].join(" "))
+    system([ "pandoc", conversion, pdf_engine ].join(" "))
 
     pdf = File.exist?(output_path) ? File.binread(output_path) : nil
 
@@ -46,7 +46,7 @@ class Api::V1::ConversionsController < ApplicationController
     extract_media = "--extract-media=#{Shellwords.escape(media_path)}"
     lua_filter = "--lua-filter=#{Shellwords.escape(File.join(pandoc_lua_scripts_path, "image_filter.lua"))}"
 
-    system(["pandoc", conversion, extract_media, lua_filter].join(" "))
+    system([ "pandoc", conversion, extract_media, lua_filter ].join(" "))
 
     html = File.exist?(output_path) ? File.read(output_path) : nil
     media = File.exist?(media_path) ? File.binread(media_path) : nil # IMPORTANT: Binary reading media zip file
@@ -60,7 +60,7 @@ class Api::V1::ConversionsController < ApplicationController
 
   def valid_file?(file)
     allowed_types = [
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ]
     allowed_types.include?(file.content_type)
   end

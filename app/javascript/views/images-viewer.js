@@ -93,13 +93,19 @@ export class ImagesViewer extends Viewer {
   }
 
   async #searchImageEvent() {
-    const value = this.textInput.value;
-    const response = await getImages({query: this.textInput.value});
-    const images = response?.data?.photos || [];
-
-    this.displayImages(images);
-
-    home.containerView.saveData(this.node.key, value);
+    this.setLoading(true);
+    try {
+      const value = this.textInput.value;
+      const response = await getImages({query: this.textInput.value});
+      const images = response?.data?.photos || [];
+  
+      this.displayImages(images);
+  
+      home.containerView.saveData(this.node.key, value);
+      this.setLoading(false);
+    } catch (error) {
+      this.setLoading(false);
+    }
   }
 
   #changeImageSizeEvent(e) {

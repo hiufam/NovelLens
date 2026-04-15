@@ -87,14 +87,22 @@ export class TranslatorViewer extends Viewer {
   }
 
   async #lookupWordEvent() {
-    const value = this.textInput.value;
-    const response = await getWordDefinition(value);
-    const data = response.data;
+    this.setLoading(true);
 
-    if (data?.length > 0) {
-      this.displayTextDefinition(data[0]);
+    try {
+      const value = this.textInput.value;
+      const response = await getWordDefinition(value);
+      const data = response.data;
+  
+      if (data?.length > 0) {
+        this.displayTextDefinition(data[0]);
+      }
+      home.containerView.saveData(this.node.key, value);
+  
+      this.setLoading(false);
+    } catch (error) {
+      this.setLoading(false);
     }
-    home.containerView.saveData(this.node.key, value);
   }
 
   /**

@@ -99,11 +99,17 @@ export class WikiViewer extends Viewer {
   }
 
   async #searchWikiEvent() {
-    const value = this.input.value;
-    const response = await searchWiki(value);
-    
-    this.#displaySearches(response.data);
-
-    home.containerView.saveData(this.node.key, value);
+    this.setLoading(true);
+    try {
+      const value = this.input.value;
+      const response = await searchWiki(value);
+      
+      this.#displaySearches(response.data);
+  
+      home.containerView.saveData(this.node.key, value);
+      this.setLoading(false);
+    } catch (error) {
+      this.setLoading(false);
+    }
   }
 }
