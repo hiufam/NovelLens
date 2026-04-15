@@ -71,7 +71,9 @@ class Home {
         
         node.data.viewer = Reflect.construct(classViewerMap[node.data.viewerId].class, [container, node]);        
       }
-    })
+    });
+
+    this.containerView.loadSavedData();
   }
 }
   

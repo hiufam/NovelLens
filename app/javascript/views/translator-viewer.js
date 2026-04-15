@@ -1,6 +1,8 @@
 import { getWordDefinition } from '../apis/dictionary';
 import { Viewer } from '../views/viewer';
 
+import { home } from '../views/home';
+
 export class TranslatorViewer extends Viewer {
   constructor(container, node) {
     super(container, node);    
@@ -16,6 +18,11 @@ export class TranslatorViewer extends Viewer {
     this.lookupButton.addEventListener('click', this.#lookupWordEvent.bind(this))
   }
   
+  loadSavedData(data) {
+    this.textInput.value = data;
+    this.#lookupWordEvent();
+  }
+
   updateTextDisplay(text) {
     this.textInput.value = text;          
   }
@@ -80,12 +87,14 @@ export class TranslatorViewer extends Viewer {
   }
 
   async #lookupWordEvent() {
-    const response = await getWordDefinition(this.textInput.value);
+    const value = this.textInput.value;
+    const response = await getWordDefinition(value);
     const data = response.data;
 
     if (data?.length > 0) {
       this.displayTextDefinition(data[0]);
     }
+    home.containerView.saveData(this.node.key, value);
   }
 
   /**

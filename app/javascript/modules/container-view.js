@@ -485,6 +485,33 @@ export class ContainerView {
     localStorage.setItem('view_config', JSON.stringify(view));
   }
 
+  saveData(key, data) {
+    const savedData = JSON.parse(localStorage.getItem('saved_data')) ?? {};
+    savedData[key] = data;
+    
+    localStorage.setItem('saved_data', JSON.stringify(savedData));
+  }
+
+  loadSavedData() {
+    const savedData = JSON.parse(localStorage.getItem('saved_data'));
+    Object.entries(savedData).forEach((entry) => {
+      const key = entry[0];
+      const data = entry[1];
+      const node = this.tree.findNode(key);
+
+      if (!node) {        
+        delete savedData[key]
+      }      
+
+      if (node?.data?.viewer && data) {
+        const viewer = node.data.viewer;
+        viewer.loadSavedData(data);        
+      }
+    });
+
+    localStorage.setItem('saved_data', JSON.stringify(savedData));
+  }
+
   static getSavedView() {
     const viewConfig = localStorage.getItem('view_config');    
     if (!viewConfig) return ContainerView.getDefaultTree();

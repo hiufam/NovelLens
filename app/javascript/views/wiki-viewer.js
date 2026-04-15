@@ -1,5 +1,6 @@
 import { searchWiki } from "../apis/browse"
 import { Viewer } from '../views/viewer';
+import { home } from '../views/home';
 
 export class WikiViewer extends Viewer {
   searchContainers = [];
@@ -16,6 +17,11 @@ export class WikiViewer extends Viewer {
     this.input = this.container.querySelector('.wiki-input')
 
     this.lookupButton.addEventListener('click', this.#searchWikiEvent.bind(this))
+  }
+
+  loadSavedData(data) {
+    this.input.value = data;
+    this.#searchWikiEvent();
   }
 
   /**
@@ -97,5 +103,7 @@ export class WikiViewer extends Viewer {
     const response = await searchWiki(value);
     
     this.#displaySearches(response.data);
+
+    home.containerView.saveData(this.node.key, value);
   }
 }

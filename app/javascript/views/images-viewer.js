@@ -1,5 +1,6 @@
 import { getImages } from '../apis/images';
 import { Viewer } from '../views/viewer';
+import { home } from '../views/home';
 
 export class ImagesViewer extends Viewer {
   imageContainers = [];
@@ -18,7 +19,12 @@ export class ImagesViewer extends Viewer {
 
     this.lookupButton.addEventListener('click', this.#searchImageEvent.bind(this))
     this.imageSizeSlider.addEventListener('input', this.#changeImageSizeEvent.bind(this))
-}
+  }
+
+  loadSavedData(data) {
+    this.textInput.value = data;
+    this.#searchImageEvent();
+  }
 
   /**
    * 
@@ -87,10 +93,13 @@ export class ImagesViewer extends Viewer {
   }
 
   async #searchImageEvent() {
+    const value = this.textInput.value;
     const response = await getImages({query: this.textInput.value});
     const images = response?.data?.photos || [];
 
     this.displayImages(images);
+
+    home.containerView.saveData(this.node.key, value);
   }
 
   #changeImageSizeEvent(e) {

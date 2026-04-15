@@ -128,7 +128,8 @@ export class DocViewer extends Viewer {
    * https://mozilla.github.io/pdf.js/examples/
    */
   async #viewFile(file) {
-    if (!file) return;    
+    if (!file) return;
+
     let pdfFile = file;
     const ext = file.name.split('.').pop();
     
