@@ -1,4 +1,5 @@
 class Api::V1::ConversionsController < ApplicationController
+  allow_unauthenticated_access
   protect_from_forgery with: :null_session # WARNING: disabling CSRF protection for file upload
 
   require "shellwords"
