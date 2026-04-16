@@ -14,5 +14,33 @@
       <%= render "shared/wiki-viewer" %>
       <%= render "shared/viewer-overlay" %>
     </div>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="user-profile" aria-labelledby="offcanvasTopLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasEndLabel">Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="profile">
+          <div class="profile-head">
+            <div class="avatar">
+              <i class="bi bi-person-fill" style="font-size: 38px; color: white;"></i>
+            </div>
+            <% unless @user.nil? %>
+              <p class="fw-semibold profile-email">
+                <%= @user.email_address %>
+              </p>
+              <button class="btn btn-primary sign-out-button">
+                Sign out
+              </button>
+            <% else %>
+              <button class="btn btn-primary sign-in-button">
+                Sign in
+              </button>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

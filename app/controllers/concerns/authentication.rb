@@ -11,6 +11,7 @@ module Authentication extend ActiveSupport::Concern
   # Defined methods. When other modules include this module, we can call Module.defined_method
   class_methods do
     def allow_unauthenticated_access(**options)
+      before_action -> { resume_session }
       skip_before_action :require_authentication, **options
     end
 

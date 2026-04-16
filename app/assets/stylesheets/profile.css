@@ -1,0 +1,49 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .profile-head {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+
+    border-width: 2px;
+    border-style: solid;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-radius: 12px;
+    border-color: var(--bs-primary);
+
+    .avatar {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+  
+      width: 64px;
+      height: 64px;
+      background-color: var(--bs-primary);
+  
+      border-color: transparent;
+      border-style: solid;
+      border-radius: 999px;
+      border-width: 1px;
+    }
+  
+    .profile-email {
+      margin-bottom: 0px;
+    }
+    
+    .sign-out-button {
+      color: white !important;
+    }
+
+    .sign-in-button {
+      color: white !important;
+    }
+  }
+}
