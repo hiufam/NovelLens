@@ -493,7 +493,7 @@ export class ContainerView {
   }
 
   loadSavedData() {
-    const savedData = JSON.parse(localStorage.getItem('saved_data'));
+    const savedData = JSON.parse(localStorage.getItem('saved_data')) ?? {};
     Object.entries(savedData).forEach((entry) => {
       const key = entry[0];
       const data = entry[1];

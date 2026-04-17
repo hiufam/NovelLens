@@ -96,7 +96,7 @@ class Home {
   }
 
   #signInEvent() {
-      window.location.href = "/session/new";
+    window.location.href = "/session/new";
   }
 }
   
