@@ -11,12 +11,9 @@ default: &default
 
 development:
   <<: *default
-  database: "<%= ENV.fetch('POSTGRES_DB') { 'postgres' } %>_development"
 
 test:
   <<: *default
-  database: "<%= ENV.fetch('POSTGRES_DB') { 'postgres' } %>_test"
 
 production:
   <<: *default
-  database: "<%= ENV.fetch('POSTGRES_DB') { 'postgres' } %>_production"
