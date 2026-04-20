@@ -6,6 +6,7 @@ import { DocViewer } from '../views/doc-viewer';
 import { DefinitionViewer } from '../views/definition-viewer';
 import { ImagesViewer } from '../views/images-viewer';
 import { WikiViewer } from '../views/wiki-viewer';
+import { NoteViewer } from '../views/note-viewer';
 
 import { signOut } from '../apis/auth';
 
@@ -22,15 +23,18 @@ export const classViewerMap = {
   'wiki-viewer': {
     class: WikiViewer
   },
+  'note-viewer': {
+    class: NoteViewer
+  }
 }
 
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 });
 
-var toastList = document.getElementsByClassName('toast');
-Array.from(toastList).forEach((toast) => {
+const flashToast = document.getElementsByClassName('flash-toast');
+Array.from(flashToast).forEach((toast) => {
   let bsAlert = new bootstrap.Toast(toast);
   setTimeout(function () {
     bsAlert.show();
@@ -45,7 +49,6 @@ class Home {
   toggleHeaders = true;
   
   constructor() {
-    this.initializeView();
     this.signOutButton = document.getElementsByClassName('sign-out-button')[0];
     this.signInButton = document.getElementsByClassName('sign-in-button')[0];    
 
@@ -99,6 +102,6 @@ class Home {
     window.location.href = "/session/new";
   }
 }
-  
+
 export const home = new Home()
-  
+home.initializeView();

@@ -1,0 +1,33 @@
+.note-viewer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 6px;
+
+  .note-viewer-body {
+    flex-grow: 1;
+    overflow: auto;
+    z-index: 1;
+    /* margin-bottom: 48px; */
+  }
+
+  .note-tools {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+
+    .note-save-button {
+      width: fit-content;
+    }
+
+    .note-load-button {
+      width: fit-content;
+    }
+  }
+
+  .note-textarea {
+    height: 100%;
+    resize: none;
+  }
+}

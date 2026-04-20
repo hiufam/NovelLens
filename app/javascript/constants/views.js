@@ -13,4 +13,7 @@ export const viewerMap = {
   'wiki-viewer': {
     name: 'Wiki',
   },
+  'note-viewer': {
+    name: 'Note',
+  }
 }

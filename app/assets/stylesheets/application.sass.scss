@@ -26,14 +26,18 @@ $secondary: #6bc384;
   margin-left: auto
 }
 
-.toast-alert {
-  color: var( --bs-danger);
-  text-transform: capitalize;
-}
+.toast {
+  z-index: 100;
 
-.toast-notice {
-  color: var( --bs-success);
-  text-transform: capitalize;
+  .toast-alert {
+    color: var( --bs-danger);
+    text-transform: capitalize;
+  }
+  
+  .toast-notice {
+    color: var( --bs-success);
+    text-transform: capitalize;
+  }
 }
 
 // Button mixin: https://getbootstrap.com/docs/5.0/components/buttons/#mixins
