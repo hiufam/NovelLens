@@ -1,19 +1,19 @@
 import { getWordDefinition } from '../apis/dictionary';
-import { Viewer } from '../views/viewer';
+import { Viewer } from './viewer';
 
-import { home } from '../views/home';
+import { home } from './home';
 
-export class TranslatorViewer extends Viewer {
+export class DefinitionViewer extends Viewer {
   constructor(container, node) {
     super(container, node);    
     this.init(container);
   }
   
   init() { 
-    this.viewContainer = this.container.querySelector('.translator-viewer'); 
-    this.viewBodyContainer = this.container.querySelector('.translator-viewer-body');     
-    this.textInput = this.container.querySelector('.translator-text-input')
-    this.lookupButton = this.container.querySelector('.translator-lookup-button')
+    this.viewContainer = this.container.querySelector('.definition-viewer'); 
+    this.viewBodyContainer = this.container.querySelector('.definition-viewer-body');     
+    this.textInput = this.container.querySelector('.definition-text-input')
+    this.lookupButton = this.container.querySelector('.definition-lookup-button')
     
     this.lookupButton.addEventListener('click', this.#lookupWordEvent.bind(this))
   }

@@ -3,7 +3,7 @@
 import { ContainerView } from '../modules/container-view';
 
 import { DocViewer } from '../views/doc-viewer';
-import { TranslatorViewer } from '../views/translator-viewer';
+import { DefinitionViewer } from '../views/definition-viewer';
 import { ImagesViewer } from '../views/images-viewer';
 import { WikiViewer } from '../views/wiki-viewer';
 
@@ -13,8 +13,8 @@ export const classViewerMap = {
   'doc-viewer': {
     class: DocViewer
   },
-  'translator-viewer': {
-    class: TranslatorViewer
+  'definition-viewer': {
+    class: DefinitionViewer
   },
   'images-viewer': {
     class: ImagesViewer

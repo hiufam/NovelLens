@@ -4,8 +4,8 @@ export const viewerMap = {
   'doc-viewer': {
     name: 'Document',
   },
-  'translator-viewer': {
-    name: 'Translator',
+  'definition-viewer': {
+    name: 'Definition',
   },
   'images-viewer': {
     name: 'Images',

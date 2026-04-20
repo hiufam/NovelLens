@@ -550,7 +550,7 @@ export class ContainerView {
     const node0 = new TreeNode('0', { flexDirection: 'row', viewerId: 'doc-viewer', moveEnabled: true});
     const node1 = new TreeNode('1', { flexDirection: 'column', type: 'wrapper' });
 
-    const node2 = new TreeNode('2', { flexDirection: 'row', viewerId: 'translator-viewer', moveEnabled: true });
+    const node2 = new TreeNode('2', { flexDirection: 'row', viewerId: 'definition-viewer', moveEnabled: true });
     const node3 = new TreeNode('3', { flexDirection: 'row', viewerId: 'images-viewer', moveEnabled: true });
     const node4 = new TreeNode('4', { flexDirection: 'row', viewerId: 'wiki-viewer', moveEnabled: true });
 

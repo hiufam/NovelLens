@@ -1,9 +1,9 @@
-.translator-viewer {
+.definition-viewer {
   display: flex;
   flex-direction: column;
   height: 100%;
 
-  .translator-viewer-body {
+  .definition-viewer-body {
     display: flex;
     position: relative;
     flex-grow: 1;

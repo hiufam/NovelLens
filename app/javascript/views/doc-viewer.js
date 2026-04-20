@@ -270,10 +270,10 @@ export class DocViewer extends Viewer {
       this.#highlightTimeOutFuncId = setTimeout(() => {
         home.highlightedText = selection.toString();
 
-        const translatorViewerNodes = home.tree.findByData('viewerId', 'translator-viewer');
+        const definitionViewerNodes = home.tree.findByData('viewerId', 'definition-viewer');
         const imagesViewerNodes = home.tree.findByData('viewerId', 'images-viewer');
 
-        translatorViewerNodes?.[0]?.data?.viewer.updateTextDisplay(selection.toString());
+        definitionViewerNodes?.[0]?.data?.viewer.updateTextDisplay(selection.toString());
         imagesViewerNodes?.[0]?.data?.viewer.updateTextDisplay(selection.toString());
       }, 500);
       
