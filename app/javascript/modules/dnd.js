@@ -1,8 +1,12 @@
 
 export function addDndBehavior(element, options) {
   const { onMoving, onEnded, onStart } = options;
+
   const body = document.getElementById('main-container');
-  
+  const viewerOverlay = document.getElementById('viewer-overlay');
+  const sharedViews = document.getElementById('shared-views');
+  const areas = document.getElementsByClassName('drag-box');
+
   let clonedElement = null;
   let pos1, pos2, pos3, pos4;
 
@@ -67,6 +71,7 @@ export function addDndBehavior(element, options) {
     clonedElement.style.top = (clonedElement.offsetTop - pos2) + 'px';
     clonedElement.style.left = (clonedElement.offsetLeft - pos1) + 'px';
 
+    displayDropHint(clientPos);
     onMoving?.(clonedElement, clientPos);
   }
     
@@ -86,6 +91,34 @@ export function addDndBehavior(element, options) {
     document.ontouchend = null;
     document.ontouchmove = null;
 
+    sharedViews.append(viewerOverlay);
+
     clonedElement.remove();
   }
+
+  function displayDropHint(pos) {
+    const hoveredElement = isOver(Array.from(areas), pos);
+    if (hoveredElement?.parentElement) {
+      hoveredElement.append(viewerOverlay);
+    }
+  }
+
+  function isOver(elements, e) {
+    let hoveredElement = null; 
+    elements.forEach((element)  => {      
+      const rect = element.getBoundingClientRect();      
+      
+      var left = rect.x,
+          top = rect.y,
+          right = left + rect.width,
+          bottom = top + rect.height;
+          
+      if (e.clientX > left && e.clientX < right && e.clientY > top && e.clientY < bottom ) {
+        hoveredElement = element;
+        return;
+      }
+    });
+
+    return hoveredElement;
+  };
 }

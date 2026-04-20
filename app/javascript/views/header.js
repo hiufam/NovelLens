@@ -31,7 +31,11 @@ class Header {
       const listItem = document.createElement('li');
       const dropwDownItem = document.createElement('div');
       
+      const dragger = document.createElement('i')
+      dragger.classList.add('bi', 'bi-grip-vertical');
+
       dropwDownItem.classList.add('viewer-dropdown-item', 'dropdown-item');
+      dropwDownItem.append(dragger);
       dropwDownItem.append(viewer.name);
       
       // Add drag and drop behavior
