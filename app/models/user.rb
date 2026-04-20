@@ -5,6 +5,7 @@ class User < ApplicationRecord
   # https://github.com/rails/rails/blob/fa8f0812160665bff083a089d2bb2fc1817ea03e/activemodel/lib/active_model/secure_password.rb#L223
   has_secure_password
   has_many :sessions, dependent: :destroy
+  has_many :notes, dependent: :destroy
 
   # :with -> callable object that accept attribute's value as argument
   # https://api.rubyonrails.org/v8.1.3/classes/ActiveModel/Attributes/Normalization/ClassMethods.html#method-i-normalizes
