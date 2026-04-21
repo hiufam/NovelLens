@@ -1,6 +1,7 @@
 import { Viewer } from './viewer';
 
 import { home } from './home';
+import { profile } from './profile';
 
 import { createNote } from '../apis/note'
 
@@ -68,6 +69,8 @@ export class NoteViewer extends Viewer {
       toastTitle.classList.add('toast-notice');
 
       toast.show();
+
+      profile.selectPageEvent(1);
     } else {
       const responseJSON = result?.data;
       const toastBody = toastElement.querySelector('.toast-body');

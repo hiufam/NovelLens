@@ -8,6 +8,13 @@ class Profile {
     this.#renderNotes();
   }  
 
+  selectPageEvent(page) {    
+    this.notePagination.innerHTML = "";
+    this.notesList.innerHTML = "";
+    
+    this.#renderNotes({ offset: page - 1 });
+  }
+
   async #renderNotes(params = { offset: 0 }) {
     const result = await getNotes({ limit: 8, offset: params.offset });
     const notes = result?.data?.records || [];
@@ -51,20 +58,15 @@ class Profile {
       const pageBtn = document.createElement('li');
       pageBtn.classList.add('page-item');
       pageBtn.innerHTML = `<a class="page-link ${i === 0 && "active"}" href="#">${currentPage + i}</a>`;
-      pageBtn.addEventListener('click', (e) => this.#selectPageEvent(e, currentPage + i));
+      pageBtn.addEventListener('click', (e) =>  {
+        e.preventDefault();
+        this.selectPageEvent(currentPage + i);
+      });
 
       this.notePagination.append(pageBtn);
     }   
   }
 
-  #selectPageEvent(e, page) {
-    e.preventDefault();
-    
-    this.notePagination.innerHTML = "";
-    this.notesList.innerHTML = "";
-    
-    this.#renderNotes({ offset: page - 1 });
-  }
 }
 
 export const profile = new Profile;
