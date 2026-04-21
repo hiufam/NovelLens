@@ -2,6 +2,7 @@ import { Viewer } from './viewer';
 
 import { home } from './home';
 import { profile } from './profile';
+import { noteModal } from './modals/note-modal';
 
 import { createNote } from '../apis/note'
 
@@ -28,59 +29,21 @@ export class NoteViewer extends Viewer {
     this.noteTitleForm = this.noteTitleModal.querySelector('#note-title-form');    
 
     this.textArea.addEventListener('input', this.#textAreaChangeEvent.bind(this));
-    this.noteTitleForm.addEventListener('submit', this.#saveNoteEvent.bind(this));
-  }
-  
-  logSubmit(event) {
-    console.log(event);
-    
-    event.preventDefault();
+    this.saveButton.addEventListener('click', this.#updateNoteModalNoteContentEvent.bind(this));
   }
 
   loadSavedData(data) {
     this.textArea.value = data;
-    this.#textAreaChangeEvent();
   }
-
+  
   #textAreaChangeEvent() {    
     const value = this.textArea.value;    
     home.containerView.saveData(this.node.key, value);
   }
 
-  async #saveNoteEvent(event) {
-    event.preventDefault();
-  
-    const formData = new FormData(this.noteTitleForm);
-    formData.append('content', this?.textArea.value || "");
-
-    const result = await createNote(formData);
-
-    if (result?.response) {
-      this.noteTitleModalInstance.hide();
-      this.noteTitleForm.reset();
-    }
-
-    if (result?.response.ok) {
-      const toastBody = toastElement.querySelector('.toast-body');
-      const toastTitle = toastElement.querySelector('.toast-title');
-      
-      toastBody.innerHTML = "Note saved!";
-      toastTitle.innerHTML = 'Notice';
-      toastTitle.classList.add('toast-notice');
-
-      toast.show();
-
-      profile.selectPageEvent(1);
-    } else {
-      const responseJSON = result?.data;
-      const toastBody = toastElement.querySelector('.toast-body');
-      const toastTitle = toastElement.querySelector('.toast-title');
-      
-      toastBody.innerHTML = responseJSON.error;
-      toastTitle.innerHTML = 'Warning';
-      toastTitle.classList.add('toast-alert');
-
-      toast.show();
-    }
+  #updateNoteModalNoteContentEvent() {
+    noteModal.setData({
+      content: this.textArea.value
+    });
   }
 }

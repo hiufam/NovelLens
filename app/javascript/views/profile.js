@@ -1,3 +1,5 @@
+import { noteModal } from '../views/modals/note-modal';
+
 import { deleteNote, getNotes } from '../apis/note';
 
 class Profile {
@@ -18,7 +20,11 @@ class Profile {
     this.#renderNotes({ offset: page - 1 });
   }
 
-  async #deleteNote(id) {
+  #saveNoteEvent(id, content) {
+    noteModal.setData({ id, content });
+  }
+
+  async #deleteNoteEvent(id) {
     const result = await deleteNote(id);
     if (result?.data?.success) {
       this.selectPageEvent(this.notesPage || 0);
@@ -45,6 +51,8 @@ class Profile {
       const editButton = document.createElement('button');
       editButton.classList.add('btn', 'btn-custom', 'btn-sm', 'edit-button')
       editButton.innerHTML = '<i class="bi bi-pencil-square"></i>';
+      editButton.setAttribute('data-bs-toggle', 'modal');
+      editButton.setAttribute('data-bs-target', '#note-title-modal');
 
       const deleteButton = document.createElement('button');
       deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'delete-button')
@@ -55,7 +63,12 @@ class Profile {
 
       deleteButton.addEventListener('click', (e) => {
         e.preventDefault();
-        this.#deleteNote(note.id);
+        this.#deleteNoteEvent(note.id);
+      });
+
+      editButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.#saveNoteEvent(note.id, note.content);
       });
 
       noteElement.append(noteTitle);

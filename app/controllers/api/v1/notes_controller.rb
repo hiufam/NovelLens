@@ -46,4 +46,19 @@ class Api::V1::NotesController < ApplicationController
       render json: { error: "Something went wrong" }, status: :unprocessable_entity
     end
   end
+
+  def update
+    permitted = params.permit(:id, :title, :content)
+
+    note = Note.find_by(id: permitted[:id])
+
+    note.title = permitted[:title] if permitted[:title]
+    note.content = permitted[:content] if permitted[:content]
+
+    if note.save
+      render json: note
+    else
+      render json: { error: "Something went wrong" }, status: :unprocessable_entity
+    end
+  end
 end
