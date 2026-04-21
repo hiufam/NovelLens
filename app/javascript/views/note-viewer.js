@@ -52,14 +52,14 @@ export class NoteViewer extends Viewer {
     const formData = new FormData(this.noteTitleForm);
     formData.append('content', this?.textArea.value || "");
 
-    const response = await createNote(formData);
+    const result = await createNote(formData);
 
-    if (response) {
+    if (result?.response) {
       this.noteTitleModalInstance.hide();
       this.noteTitleForm.reset();
     }
 
-    if (response.ok) {
+    if (result?.response.ok) {
       const toastBody = toastElement.querySelector('.toast-body');
       const toastTitle = toastElement.querySelector('.toast-title');
       
@@ -69,7 +69,7 @@ export class NoteViewer extends Viewer {
 
       toast.show();
     } else {
-      const responseJSON = await response.json();      
+      const responseJSON = result?.data;
       const toastBody = toastElement.querySelector('.toast-body');
       const toastTitle = toastElement.querySelector('.toast-title');
       

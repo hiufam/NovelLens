@@ -6,8 +6,27 @@ export async function createNote(formData) {
         'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
       },
       body: formData
-    });    
-    return response;
+    });        
+    const jsonRes = await response.json();
+    
+    return {
+      response,
+      data: jsonRes,
+    };
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+export async function getNotes(params = { limit: 5, offset: 0 }) {
+  try {
+    const response = await fetch(`/api/v1/notes?limit=${params.limit}&offset=${params.offset}`);
+    const jsonRes = await response.json();    
+
+    return {
+      response,
+      data: jsonRes,
+    };
   } catch (error) {
     console.error("Error:", error);
   }
