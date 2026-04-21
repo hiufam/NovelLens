@@ -15,6 +15,10 @@ class Profile {
     this.#renderNotes({ offset: page - 1 });
   }
 
+  async #deleteNote(id) {
+
+  }
+
   async #renderNotes(params = { offset: 0 }) {
     const result = await getNotes({ limit: 8, offset: params.offset });
     const notes = result?.data?.records || [];

@@ -1,11 +1,7 @@
 class Api::V1::NotesController < ApplicationController
-  allow_unauthenticated_access
+  api_only_authenticated_access
 
   def index
-    if !Current.session.present?
-      return render json: { error: "Unauthorized" }, status: :unauthorized
-    end
-
     permitted = params.permit(:limit, :offset)
 
     limit = (permitted[:limit] ||= 10).to_i
@@ -27,10 +23,6 @@ class Api::V1::NotesController < ApplicationController
   end
 
   def create
-    if !Current.session.present?
-      return render json: { error: "Must sign in to save note" }, status: :unauthorized
-    end
-
     permitted = params.permit(:title, :content)
 
     @user = Current.user

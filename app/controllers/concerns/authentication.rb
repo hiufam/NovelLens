@@ -10,6 +10,11 @@ module Authentication extend ActiveSupport::Concern
 
   # Defined methods. When other modules include this module, we can call Module.defined_method
   class_methods do
+    def api_only_authenticated_access(**options)
+      before_action -> { api_require_authentication }
+      skip_before_action :require_authentication, **options
+    end
+
     def allow_unauthenticated_access(**options)
       before_action -> { resume_session }
       skip_before_action :require_authentication, **options
@@ -29,6 +34,13 @@ module Authentication extend ActiveSupport::Concern
 
     def require_authentication
       resume_session || request_authentication
+    end
+
+    def api_require_authentication
+      Current.session ||= find_session_by_cookie
+      if !Current.session.present?
+        render json: { error: "User must sign in" }, status: :unauthorized
+      end
     end
 
     # Check for expired sessions and remove them. If current session is removed return nil
