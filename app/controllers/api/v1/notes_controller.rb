@@ -34,4 +34,16 @@ class Api::V1::NotesController < ApplicationController
       render json: { error: "Something went wrong" }, status: :unprocessable_entity
     end
   end
+
+  def destroy
+    permitted = params.permit(:id)
+
+    note = Note.find_by(id: permitted[:id])
+
+    if note.destroy
+      render json: { success: "Note destroyed" }
+    else
+      render json: { error: "Something went wrong" }, status: :unprocessable_entity
+    end
+  end
 end

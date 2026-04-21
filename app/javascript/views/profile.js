@@ -1,6 +1,9 @@
-import { getNotes } from '../apis/note';
+import { deleteNote, getNotes } from '../apis/note';
 
 class Profile {
+  notesPage = 0;
+  totalNotesPage = 0;
+
   constructor() {
     this.notesList = document.getElementsByClassName('notes-list')[0];
     this.notePagination = document.getElementById('notes-pagination').querySelector('.pagination'); 
@@ -16,7 +19,10 @@ class Profile {
   }
 
   async #deleteNote(id) {
-
+    const result = await deleteNote(id);
+    if (result?.data?.success) {
+      this.selectPageEvent(this.notesPage || 0);
+    }
   }
 
   async #renderNotes(params = { offset: 0 }) {
@@ -47,6 +53,11 @@ class Profile {
       noteTools.append(editButton);
       noteTools.append(deleteButton);
 
+      deleteButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.#deleteNote(note.id);
+      });
+
       noteElement.append(noteTitle);
       noteElement.append(noteTools);
 
@@ -68,9 +79,11 @@ class Profile {
       });
 
       this.notePagination.append(pageBtn);
-    }   
-  }
+    }
 
+    this.notesPage = currentPage;
+    this.totalNotesPage = pagesCount;
+  }
 }
 
 export const profile = new Profile;
