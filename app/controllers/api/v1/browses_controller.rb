@@ -36,6 +36,6 @@ class Api::V1::BrowsesController < ApplicationController
 
     uri.query = URI.encode_www_form(params)
 
-    response = Net::HTTP.get_response(uri)
+    Net::HTTP.get_response(uri)
   end
 end

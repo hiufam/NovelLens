@@ -13,8 +13,9 @@ Rails.application.routes.draw do
   root "home#index"
 
   resource :session
-  resources :passwords, param: :token
   resource :sign_up
+
+  resources :passwords, param: :token
 
   namespace :api do
     namespace :v1 do
@@ -26,6 +27,7 @@ Rails.application.routes.draw do
       post "docx_to_pdf", to: "conversions#docx_to_pdf"
 
       resources :logger
+      resources :notes
     end
   end
 end

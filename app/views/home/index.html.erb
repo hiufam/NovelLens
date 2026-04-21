@@ -16,6 +16,29 @@
       <%= render "shared/viewer-overlay" %>
     </div>
 
+    <div class="modal fade" id="note-title-modal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <%= form_with id: "note-title-form" do |form| %>
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Enter note title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group">
+                <%= form.text_field :title, class:"form-control note-title-text-input", required: true, placeholder: "Title" %>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Close</button>
+              <%= form.submit "Save", class: "btn btn-custom submit-button" %> 
+              <!-- <button class="btn btn-custom save-button" type="submit">Save</button> -->
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
     <div class="offcanvas offcanvas-end" tabindex="-1" id="user-profile" aria-labelledby="offcanvasTopLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasEndLabel">Profile</h5>
