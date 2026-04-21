@@ -16,7 +16,7 @@ class Api::V1::NotesController < ApplicationController
     base_query = Note.where(user_id: @user.id)
 
     total = base_query.count
-    notes = base_query.limit(limit).offset(offset)
+    notes = base_query.limit(limit).offset(limit * offset)
 
     render json: {
       records: notes,
