@@ -2,7 +2,12 @@ import { noteModal } from '../views/modals/note-modal';
 
 import { deleteNote, getNotes } from '../apis/note';
 
+const profileOffCanvas = document.getElementById('user-profile')
+const profileOffCanvasInstance = bootstrap.Offcanvas.getOrCreateInstance(profileOffCanvas);
+
 class Profile {
+  selectNoteToLoad = false;
+  noteViewer = undefined;
   notesPage = 0;
   totalNotesPage = 0;
 
@@ -11,6 +16,10 @@ class Profile {
     this.notePagination = document.getElementById('notes-pagination').querySelector('.pagination'); 
     
     this.#renderNotes();
+
+    profileOffCanvas.addEventListener('hidden.bs.offcanvas', (e) => {
+      this.removeSelectNoteEvent();
+    });
   }  
 
   selectPageEvent(page) {    
@@ -18,6 +27,23 @@ class Profile {
     this.notesList.innerHTML = "";
     
     this.#renderNotes({ offset: page - 1 });
+  }
+
+  selectNoteEvent(noteViewer) {
+    this.selectNoteToLoad = true;
+    this.noteViewer = noteViewer;
+    this.selectPageEvent(this.notesPage);
+  }
+
+  removeSelectNoteEvent() {
+    this.selectNoteToLoad = false;    
+    this.noteViewer = undefined;
+    this.selectPageEvent(this.notesPage);
+  }
+
+  #loadNoteEvent(note) {
+    this.noteViewer.loadNote(note);
+    profileOffCanvasInstance.hide();
   }
 
   #saveNoteEvent(id, content) {
@@ -48,28 +74,42 @@ class Profile {
       const noteTools = document.createElement('div')
       noteTools.classList.add('note-tools');
 
-      const editButton = document.createElement('button');
-      editButton.classList.add('btn', 'btn-custom', 'btn-sm', 'edit-button')
-      editButton.innerHTML = '<i class="bi bi-pencil-square"></i>';
-      editButton.setAttribute('data-bs-toggle', 'modal');
-      editButton.setAttribute('data-bs-target', '#note-title-modal');
-
-      const deleteButton = document.createElement('button');
-      deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'delete-button')
-      deleteButton.innerHTML = '<i class="bi bi-trash3-fill"></i>';
       
-      noteTools.append(editButton);
-      noteTools.append(deleteButton);
+      if (this.selectNoteToLoad) {
+        const loadButton = document.createElement('button');
+        loadButton.classList.add('btn', 'btn-custom', 'btn-sm', 'load-button')
+        loadButton.innerHTML = '<i class="bi bi-box-arrow-in-down"></i>'
+        
+        noteTools.append(loadButton)
 
-      deleteButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.#deleteNoteEvent(note.id);
-      });
-
-      editButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.#saveNoteEvent(note.id, note.content);
-      });
+        loadButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.#loadNoteEvent(note);
+        });
+      } else {
+        const editButton = document.createElement('button');
+        editButton.classList.add('btn', 'btn-custom', 'btn-sm', 'edit-button')
+        editButton.innerHTML = '<i class="bi bi-pencil-square"></i>';
+        editButton.setAttribute('data-bs-toggle', 'modal');
+        editButton.setAttribute('data-bs-target', '#note-title-modal');
+  
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'delete-button')
+        deleteButton.innerHTML = '<i class="bi bi-trash3-fill"></i>';
+        
+        noteTools.append(editButton);
+        noteTools.append(deleteButton);
+        
+        deleteButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.#deleteNoteEvent(note.id);
+        });
+  
+        editButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.#saveNoteEvent(note.id, note.content);
+        });
+      }
 
       noteElement.append(noteTitle);
       noteElement.append(noteTools);

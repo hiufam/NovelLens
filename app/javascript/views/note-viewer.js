@@ -10,6 +10,8 @@ const toastElement = document.getElementsByClassName('default-toast')[0];
 const toast = bootstrap.Toast.getOrCreateInstance(toastElement);
 
 export class NoteViewer extends Viewer {
+  note = undefined;
+
   constructor(container, node) {
     super(container, node);    
     this.init(container);
@@ -30,10 +32,20 @@ export class NoteViewer extends Viewer {
 
     this.textArea.addEventListener('input', this.#textAreaChangeEvent.bind(this));
     this.saveButton.addEventListener('click', this.#updateNoteModalNoteContentEvent.bind(this));
+    this.loadButton.addEventListener('click', this.#loadNoteEvent.bind(this));
   }
 
   loadSavedData(data) {
     this.textArea.value = data;
+  }
+
+  loadNote(note) {
+    if (!note) return;
+
+    this.note = note;
+    this.textArea.value = note.content;
+
+    home.containerView.saveData(this.node.key, note.content);
   }
   
   #textAreaChangeEvent() {    
@@ -45,5 +57,9 @@ export class NoteViewer extends Viewer {
     noteModal.setData({
       content: this.textArea.value
     });
+  }
+
+  #loadNoteEvent() {
+    profile.selectNoteEvent(this);
   }
 }
