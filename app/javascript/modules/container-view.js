@@ -420,11 +420,21 @@ export class ContainerView {
   
   // Update size of containers when all containers have been placed correctly
   formatView() {
-    this.tree.depthFirstTraverse((node) => {      
+    this.tree.depthFirstTraverse((node) => {
       if (node.key === 'root') return;
       // move wrapper children if wrapper only has 1 child
       // move wrapper children if wrapper is parallel with parent and reappend children to new parent
       const newParentNode = node.data.parent
+
+      // If is last child in parent, set flexGrow to 1
+      if (node && node.data?.parent) {
+        const relativeIndex = node.getRelativeIndex();
+
+        if (node.data?.parent.children.length - 1 === relativeIndex) {
+          node.data.element.style.flexGrow = 1;
+        }
+      }
+      
       if (
         (node.data.type === 'wrapper' && this.checkParallel(node, newParentNode)) ||
         (node.data.type === 'wrapper' && node.children.length === 1)
@@ -446,15 +456,15 @@ export class ContainerView {
           const remainingSizePercentage = (remainingSize / newParentSize) * 100;
           const totalChildrenNodes = prevParentNode.children.length || 1;
           
-          prevParentNode.children.forEach((childNode) => {              
+          prevParentNode.children.forEach((childNode, index) => {              
             if (childNode.data.type === 'wrapper') return;
             
             childNode.data.flexDirection = 'row';
             childNode.data.size = totalChildrenNodes === 1 ? remainingSizePercentage : parseFloat(childNode.data.size) / 100 * remainingSizePercentage;
             
-            childNode.data.element.style.removeProperty('width')
-            childNode.data.element.style.removeProperty('height')              
-            
+            childNode.data.element.style.removeProperty('width');
+            childNode.data.element.style.removeProperty('height');
+
             childNode.data.element.style[mSizeKey] = `${childNode.data.size}%`;
           
           });
