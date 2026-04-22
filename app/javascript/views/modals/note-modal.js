@@ -38,9 +38,7 @@ class NoteModal {
     formData.append('content', this.data.content || "");
 
     let result;
-    if (this.data.id) {
-      console.log(formData);
-      
+    if (this.data.id) {      
       result = await updateNote(this.data.id, formData);
     } else {
       result = await createNote(formData);

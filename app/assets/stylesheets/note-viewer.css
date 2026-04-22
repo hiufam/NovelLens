@@ -12,10 +12,20 @@
     /* margin-bottom: 48px; */
   }
 
+  
   .note-tools {
     display: flex;
     gap: 4px;
-    margin-left: auto;
+    justify-content: right;
+    align-items: center;
+    width: 100%;
+    
+    .note-title {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      margin-right: auto;
+    }
 
     .note-save-button {
       width: fit-content;
