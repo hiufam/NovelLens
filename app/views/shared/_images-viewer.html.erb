@@ -1,9 +1,9 @@
 <div id="images-viewer" class="viewer images-viewer">
-  <div class="input-group mb-1">
+  <div class="input-group mb-1" style="z-index: 1;">
     <input type="text" class="form-control images-text-input" placeholder="Images" aria-label="Images" aria-describedby="button-addon2">
     <button class="btn btn-custom images-lookup-button" type="button" id="button-addon2">Search</button>
   </div>
-  <div class="slide-container">
+  <div class="slide-container" style="z-index: 1;">
     <label class="form-label" style="width: fit-content; text-wrap-mode: nowrap;">Image Size</label>
     <input type="range" min="1" max="200" value="100" class="form-range slider" id="image-size-range">
   </div>
@@ -13,5 +13,8 @@
     <div class="spinner-border text-secondary" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
+  </div>
+  <div class="empty-placeholder">
+    <i class="bi bi-image" style="font-size: 6rem; color: rgba(128, 128, 128, 0.25);"></i>
   </div>
 </div>

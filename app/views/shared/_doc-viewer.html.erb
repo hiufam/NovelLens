@@ -1,5 +1,5 @@
 <div id="doc-viewer" class="viewer doc-viewer">
-  <div style="display: flex; flex-wrap: nowrap; gap: 2px;">
+  <div style="display: flex; flex-wrap: nowrap; gap: 2px; z-index: 1;">
     <div class="input-group">
       <input 
         class="form-control doc-picker" 
@@ -48,5 +48,8 @@
       <span class="visually-hidden">Loading...</span>
     </div>
     <span>Performing conversion (This might take a moment)</span>
+  </div>
+  <div class="empty-placeholder">
+    <i class="bi bi-file-earmark-text-fill" style="font-size: 6rem; color: rgba(128, 128, 128, 0.25);"></i>
   </div>
 </div>

@@ -65,3 +65,9 @@
     opacity: 0.5;
   }
 }
+
+.empty-placeholder {
+  position: absolute;
+  left: calc(50% - 3rem);
+  top: calc(50% - 3rem);
+}

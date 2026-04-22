@@ -1,5 +1,5 @@
 <div id="definition-viewer" class="viewer definition-viewer ">
-  <div class="input-group mb-1">
+  <div class="input-group mb-1" style="z-index: 1;">
     <input type="text" class="form-control definition-text-input" placeholder="Definition" aria-label="Definition" aria-describedby="button-addon2">
     <button class="btn btn-custom definition-lookup-button" type="button" id="button-addon2">Search</button>
   </div>
@@ -9,5 +9,8 @@
     <div class="spinner-border text-secondary" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
+  </div>
+  <div class="empty-placeholder">
+    <i class="bi bi-alphabet" style="font-size: 6rem; color: rgba(128, 128, 128, 0.25); z-index: 0;"></i>
   </div>
 </div>
