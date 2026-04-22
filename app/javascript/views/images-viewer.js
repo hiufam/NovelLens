@@ -23,7 +23,7 @@ export class ImagesViewer extends Viewer {
 
   loadSavedData(data) {
     this.textInput.value = data;
-    this.#searchImageEvent();
+    // this.#searchImageEvent();
   }
 
   /**

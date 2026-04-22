@@ -53,5 +53,6 @@
 }
 
 .viewer-dropdown-item {
+  z-index: 1000;
   cursor: move;  
 }

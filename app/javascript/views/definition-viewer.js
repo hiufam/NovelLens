@@ -20,7 +20,7 @@ export class DefinitionViewer extends Viewer {
   
   loadSavedData(data) {
     this.textInput.value = data;
-    this.#lookupWordEvent();
+    // this.#lookupWordEvent();
   }
 
   updateTextDisplay(text) {

@@ -21,7 +21,7 @@ export class WikiViewer extends Viewer {
 
   loadSavedData(data) {
     this.input.value = data;
-    this.#searchWikiEvent();
+    // this.#searchWikiEvent();
   }
 
   /**
