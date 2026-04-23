@@ -61,7 +61,7 @@ class Profile {
     const result = await getNotes({ limit: 8, offset: params.offset });
     const notes = result?.data?.records || [];
     
-    if (!this.notesList || !notes) return;
+    if (!this.notesList || !notes || notes.length === 0) return;
 
     notes.forEach((note) => {
       const noteElement = document.createElement('div');
