@@ -96,6 +96,7 @@ ENV RAILS_ENV="${RAILS_ENV}" \
 COPY --chown=ruby:ruby --from=assets /usr/local/bundle /usr/local/bundle
 COPY --chown=ruby:ruby --from=assets /app/public /public
 COPY --chown=ruby:ruby . .
+COPY --chown=ruby:ruby --from=assets /app/app/assets/builds /app/app/assets/builds
 
 # ENTRYPOINT ["/app/bin/docker-entrypoint-web.sh"]
 ENTRYPOINT ["/entrypoint.sh"]
