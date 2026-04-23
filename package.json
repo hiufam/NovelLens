@@ -2,7 +2,7 @@
   "name": "novel-lens",
   "private": true,
   "scripts": {
-    "build": "node esbuild.config.js",
+    "build": "yarn install && node esbuild.config.js",
     "build:watch": "node esbuild.config.js --watch",
     "build:css": "sass ./app/assets/stylesheets/application.sass.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
   },

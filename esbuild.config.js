@@ -7,6 +7,7 @@ const ctx = await esbuild.context({
   bundle: true,
   sourcemap: true,
   outdir: "app/assets/builds",
+  publicPath: "/assets",
   format: "esm", // You need to set the output format to "esm" for "import.meta" to work correctly.
 });
 
