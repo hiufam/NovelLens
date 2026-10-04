@@ -1,6 +1,7 @@
 # NovelLens
 
 NovelLens is a homemade crude Rails web application for reading docx/pdf of novels or books with built-in definition, images and wiki search.
+
 <img width="1836" height="932" alt="Screenshot 2026-10-04 223812" src="https://github.com/user-attachments/assets/aaad0d27-21b6-46b2-a99a-191948effb07" />
 
 ## Sample
